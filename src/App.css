@@ -1,38 +1,271 @@
-.App {
-  text-align: center;
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 100;
+  src: url("/public/fonts/Effra-Thin.ttf");
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 100;
+  src: url("/public/fonts/Effra-ThinItalic.ttf");
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 300;
+  src: url("/public/fonts/Effra-Light.ttf");
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 300;
+  src: url("/public/fonts/Effra-LightItalic.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/public/fonts/Effra-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 400;
+  src: url("/public/fonts/Effra-Italic.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 500;
+  src: url("/public/fonts/Effra-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 500;
+  src: url("/public/fonts/Effra-MediumItalic.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 600;
+  src: url("/public/fonts/Effra-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 600;
+  src: url("/public/fonts/Effra-SemiBoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 700;
+  src: url("/public/fonts/Effra-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 700;
+  src: url("/public/fonts/Effra-BoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 800;
+  src: url("/public/fonts/Effra-ExtraBold.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 800;
+  src: url("/public/fonts/Effra-ExtraBoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: normal;
+  font-weight: 900;
+  src: url("/public/fonts/Effra-Black.ttf");
+}
+
+@font-face {
+  font-family: "Effra";
+  font-style: italic;
+  font-weight: 900;
+  src: url("/public/fonts/Effra-BlackItalic.ttf");
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-family: "Effra", sans-serif !important;
+}
+
+h2 {
+  font-size: 12px !important;
+  text-transform: uppercase;
+}
+
+body {
+  font-family: "Effra", sans-serif !important;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: row; /* Mantenha o menu lateral e o conteúdo principal lado a lado */
+  height: 100vh;
+}
+
+.page-content {
+  margin-left: 200px; /* Espaço para o menu lateral */
+  padding: 20px;
+  width: calc(
+    100% - 200px
+  ); /* Largura ajustada para considerar o menu lateral */
+  transition: margin-left 0.3s, width 0.3s; /* Adiciona transição suave para o ajuste do layout */
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #52a2f7; /* Azul para a sidebar */
+  padding: 15px;
+  position: fixed;
+  top: 0; /* Garante que a sidebar comece no topo da página */
+  bottom: 0; /* Garante que a sidebar vá até o final da página */
+  height: 100vh; /* Altura completa da página */
+  transition: width 0.3s; /* Adiciona uma transição suave para a mudança de largura */
   display: flex;
   flex-direction: column;
+  align-items: flex-start; /* Centraliza os itens ao início (esquerda) por padrão */
+  border-radius: 0 30px 30px 0;
+}
+
+.sidebar.collapsed {
+  width: 80px; /* Largura reduzida quando o menu está colapsado */
+  align-items: center; /* Centraliza os itens quando o menu está colapsado */
+}
+
+.sidebar .menu-header {
+  display: flex;
+  width: 100%;
+  margin: 20px 0;
+  justify-content: center; /* Centraliza o conteúdo do cabeçalho */
+  position: relative;
+}
+
+.sidebar .menu-header img {
+  height: 40px; /* Ajuste o tamanho da imagem conforme necessário */
+  display: block; /* Exibe a imagem como um bloco */
+}
+
+.sidebar .menu-header .full-logo {
+  display: block; /* Exibe o logo completo quando o menu não está colapsado */
+}
+
+.sidebar .menu-header .collapsed-logo {
+  display: none; /* Esconde o logo colapsado */
+}
+
+.sidebar.collapsed .menu-header .full-logo {
+  display: none; /* Esconde o logo completo quando o menu está colapsado */
+}
+
+.sidebar.collapsed .menu-header .collapsed-logo {
+  display: block; /* Exibe o logo colapsado */
+}
+
+.sidebar .menu-header .collapse-btn {
+  position: absolute;
+  top: 4vh;
+  right: -30px;
+  cursor: pointer;
+}
+
+.sidebar ul {
+  list-style-type: none; /* Remove marcadores */
+  padding: 0; /* Remove padding padrão */
+  margin: 0; /* Remove margin padrão */
+  flex: 1; /* Faz com que a lista ocupe todo o espaço disponível */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alinha os ícones ao início (esquerda) por padrão */
+}
+
+.sidebar.collapsed ul {
+  align-items: center; /* Centraliza os ícones quando o menu está colapsado */
+}
+
+.sidebar ul li a {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 10px 0;
+  color: white;
+  text-decoration: none;
+  justify-content: flex-start;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.sidebar ul li a svg {
+  margin-right: 10px;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.page-content {
+  margin-left: 200px; /* Espaço para o menu lateral */
+  padding: 20px;
+  width: calc(
+    100% - 200px
+  ); /* Largura ajustada para considerar o menu lateral */
+  background: #f8f9fa; /* Cor de fundo do conteúdo principal */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Ajusta o conteúdo quando o menu está colapsado */
+.sidebar.collapsed + .page-content {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+.sidebar .footer button .icon {
+  font-size: 20px; /* Ajuste o tamanho do ícone conforme necessário */
+}
+
+.sidebar.collapsed .footer button .text {
+  display: none; /* Esconde o texto quando o menu está colapsado */
+}
+
+.sidebar.collapsed .footer button .icon {
+  display: block; /* Exibe o ícone quando o menu está colapsado */
+}
+
+/* Botão no final da sidebar */
+.sidebar .footer {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sidebar .footer button {
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }
