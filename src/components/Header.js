@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flex, Heading, IconButton } from '@chakra-ui/react';
-import { FiBell, FiUser } from 'react-icons/fi';
+import { FiMessageSquare, FiBell, FiUser } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
 
 function Header() {
@@ -24,6 +24,7 @@ function Header() {
     <Flex justifyContent="space-between" alignItems="center" mb={6}>
       <Heading size="lg">{pageTitle}</Heading>
       <Flex alignItems="center">
+      <IconButton aria-label="MessageSquare" icon={<FiMessageSquare />} variant="ghost" />
         <IconButton aria-label="Notifications" icon={<FiBell />} variant="ghost" />
         <IconButton aria-label="Profile" icon={<FiUser />} variant="ghost" />
       </Flex>
