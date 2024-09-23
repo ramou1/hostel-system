@@ -120,6 +120,11 @@ p {
   font-family: "Effra", sans-serif !important;
 }
 
+h1 {
+  font-size: 18px !important;
+  text-transform: uppercase;
+}
+
 h2 {
   font-size: 12px !important;
   text-transform: uppercase;
