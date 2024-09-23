@@ -1,7 +1,14 @@
-import React from 'react';
-import { Flex, Heading, IconButton } from '@chakra-ui/react';
-import { FiMessageSquare, FiBell, FiUser } from 'react-icons/fi';
-import { useLocation } from 'react-router-dom';
+import React from "react";
+import {
+  Flex,
+  Heading,
+  IconButton,
+  Avatar,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/react";
+import { FiMessageSquare, FiBell, FiUser } from "react-icons/fi";
+import { useLocation } from "react-router-dom";
 
 function Header() {
   const location = useLocation();
@@ -24,9 +31,22 @@ function Header() {
     <Flex justifyContent="space-between" alignItems="center" mb={6}>
       <Heading size="lg">{pageTitle}</Heading>
       <Flex alignItems="center">
-      <IconButton aria-label="MessageSquare" icon={<FiMessageSquare />} variant="ghost" />
-        <IconButton aria-label="Notifications" icon={<FiBell />} variant="ghost" />
-        <IconButton aria-label="Profile" icon={<FiUser />} variant="ghost" />
+        <IconButton
+          aria-label="MessageSquare"
+          icon={<FiMessageSquare />}
+          variant="ghost"
+        />
+        <IconButton
+          aria-label="Notifications"
+          icon={<FiBell />}
+          variant="ghost"
+        />
+        {/* <IconButton aria-label="Profile" icon={<FiUser />} variant="ghost" /> */}
+        <Avatar
+          size="sm"
+          bg="teal.500"
+          // src="https://bit.ly/dan-abramov"
+        />
       </Flex>
     </Flex>
   );

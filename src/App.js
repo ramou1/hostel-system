@@ -2,27 +2,22 @@ import {
   ChakraProvider,
   Box,
   Flex,
-  Button,
   IconButton,
+  useColorMode,
+  ButtonGroup,
 } from "@chakra-ui/react";
-import { Route, Routes, Link } from "react-router-dom";
-import {
-  FiHome,
-  FiUsers,
-  FiKey,
-  FiGrid,
-  FiChevronLeft,
-  FiChevronRight,
-} from "react-icons/fi";
+import { FiHome, FiUsers, FiKey, FiSun, FiMoon, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Rooms from "./pages/Rooms";
+import { Route, Routes, Link } from "react-router-dom";
 import Header from "./components/Header";
 import { useState } from "react";
-import "./App.css"; // Certifique-se de ter um arquivo CSS para estilos personalizados
+import "./App.css";
 
 function App() {
   const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
+  const { colorMode, toggleColorMode } = useColorMode(); // Corrigir para usar toggleColorMode
 
   const handleMenuToggle = () => {
     setIsMenuCollapsed((prev) => !prev);
@@ -48,11 +43,11 @@ function App() {
               icon={isMenuCollapsed ? <FiChevronRight /> : <FiChevronLeft />}
               onClick={handleMenuToggle}
               variant="solid"
-              colorScheme="blue" // Escolha a cor desejada
+              colorScheme="blue"
               className="collapse-btn"
-              borderRadius="full" // Faz o botão redondo
-              size="sm" // Ajusta o tamanho do botão
-              fontSize="16px" // Ajusta o tamanho do ícone
+              borderRadius="full"
+              size="sm"
+              fontSize="16px"
             />
           </Flex>
           <ul>
@@ -91,22 +86,36 @@ function App() {
             </li>
           </ul>
           <Box className="footer">
-            <Button size="sm" colorScheme="blue" fontSize="12px">
-              {isMenuCollapsed ? (
-                <FiGrid className="icon" />
-              ) : (
-                "UPGRADE PLAN"
-              )}
-            </Button>
+            {/* Mostrar ambos os ícones quando o menu estiver expandido */}
+            {isMenuCollapsed ? (
+              // Mostrar apenas o ícone ativo quando o menu estiver retraído
+              <IconButton
+                icon={colorMode === "light" ? <FiSun /> : <FiMoon />}
+                aria-label="Toggle color mode"
+                onClick={toggleColorMode}
+              />
+            ) : (
+              // Mostrar ambos os ícones quando o menu estiver expandido
+              <ButtonGroup isAttached>
+                <IconButton
+                  icon={<FiSun />}
+                  aria-label="Light mode"
+                  onClick={() => colorMode === "dark" && toggleColorMode()}
+                  isDisabled={colorMode === "light"}
+                />
+                <IconButton
+                  icon={<FiMoon />}
+                  aria-label="Dark mode"
+                  onClick={() => colorMode === "light" && toggleColorMode()}
+                  isDisabled={colorMode === "dark"}
+                />
+              </ButtonGroup>
+            )}
           </Box>
         </Box>
 
-        {/* Conteúdo principal */}
         <Box className={`page-content ${isMenuCollapsed ? "collapsed" : ""}`}>
-          {/* Header */}
           <Header />
-
-          {/* Rotas para as páginas */}
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/clients" element={<Clients />} />
