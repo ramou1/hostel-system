@@ -1,12 +1,15 @@
 # HostelZim - Um sistema para controle de hostel
 
-## Overview
-Projeto Web desenvolvido em React
+## Descrição
+HostelZim é um sistema web desenvolvido para o gerenciamento de hostels. Utilizando tecnologias modernas como React, Chakra UI, Chart.js, Axios e React Router, o sistema permite a administração eficiente de quartos e usuários de hostel. Com uma interface amigável e intuitiva, os administradores podem facilmente cadastrar novos quartos e usuários, além de visualizar e gerenciar as informações existentes.
 
-## Funcionalities
+## Tecnologias Utilizadas
+- React
+- Chakra UI
+- Chart.js
+- Axios
+- React Router
+
+## Funcionalidades
 - Cadastrar quartos
 - Cadastrar usuários
-
-## Libs
-- Chackra UI como biblioteca de componentes
-- `react-charjs-2` e `chart.js` para os gráficos 
