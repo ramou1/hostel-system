@@ -9,11 +9,12 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Outlet } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Rooms from "./pages/Rooms";
 import Messages from "./pages/Messages";
+import SelfRegister from "./pages/SelfRegister";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import "./App.css";
@@ -36,7 +37,8 @@ function loadProfile() {
   }
 }
 
-function App() {
+// Layout principal da área administrativa (sidebar + header + conteúdo)
+function AppShell() {
   const [collapsed, setCollapsed] = useState(false);
   const [profile, setProfile] = useState(loadProfile);
   const mobileNav = useDisclosure();
@@ -109,15 +111,27 @@ function App() {
             profile={profile}
             onSaveProfile={setProfile}
           />
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/rooms" element={<Rooms />} />
-            <Route path="/messages" element={<Messages />} />
-          </Routes>
+          <Outlet />
         </Box>
       </Box>
     </Box>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      {/* Tela pública de auto-cadastro (sem sidebar/header) */}
+      <Route path="/cadastro/:token" element={<SelfRegister />} />
+
+      {/* Área administrativa */}
+      <Route element={<AppShell />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/clients" element={<Clients />} />
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/messages" element={<Messages />} />
+      </Route>
+    </Routes>
   );
 }
 

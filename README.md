@@ -1,6 +1,6 @@
 # HostelZim - Um sistema para controle de hostel
 
-![Painel HostelZim](https://i.imgur.com/itqG6bh.png)
+![Painel HostelZim](https://i.imgur.com/ECO1cc6.png)
 
 ## Descrição
 

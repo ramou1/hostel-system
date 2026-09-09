@@ -16,6 +16,10 @@ export const translations = {
       empty: "Nada por aqui ainda.",
       page: "Página",
       of: "de",
+      remove: "Remover",
+      copy: "Copiar",
+      copied: "Copiado!",
+      open: "Abrir",
     },
     nav: {
       dashboard: "Painel",
@@ -50,13 +54,27 @@ export const translations = {
       cpf: "CPF",
       country: "País",
       language: "Idioma",
+      languageMain: "Idioma principal",
+      documentId: "ID / Passaporte",
+      documentIdPlaceholder: "Nº do documento",
+      optionalTag: "(opcional)",
       registeredAt: "Data de cadastro",
       registeredAtShort: "Cadastro",
       source: "Origem do cadastro",
       sourceLink: "Auto-cadastro (link)",
-      sourceDesk: "Balcão (atendente)",
+      sourceDesk: "Atendimento (balcão)",
       detailsTitle: "Detalhes do cliente",
       empty: "Nenhum cliente encontrado.",
+      addPhoto: "Adicionar foto",
+      changePhoto: "Alterar foto",
+      photoHint: "Tire uma foto ou envie uma imagem (JPG/PNG).",
+      selectRoom: "Selecione o quarto",
+      generateLink: "Gerar link",
+      linkTitle: "Link de auto-cadastro",
+      linkDesc:
+        'Envie este link ao hóspede. Ao preencher e enviar, o cadastro entra no sistema automaticamente como "Auto-cadastro (link)".',
+      linkNote:
+        "Simulação: o cadastro é salvo neste navegador (ainda sem banco de dados).",
       addSuccessTitle: "Sucesso!",
       addSuccessDesc: "Cliente adicionado com sucesso.",
       countries: {
@@ -147,6 +165,16 @@ export const translations = {
       placeholder:
         "Em breve você poderá conversar com os hóspedes diretamente por aqui.",
     },
+    selfRegister: {
+      title: "Cadastro de hóspede",
+      subtitle: "Preencha seus dados para concluir o seu cadastro no HostelZim.",
+      submit: "Concluir cadastro",
+      nameRequired: "Por favor, informe seu nome para continuar.",
+      successTitle: "Cadastro concluído!",
+      successDesc:
+        "Seus dados foram enviados com sucesso. Você já pode fechar esta página.",
+      footer: "HostelZim · Cadastro seguro",
+    },
   },
 
   en: {
@@ -165,6 +193,10 @@ export const translations = {
       empty: "Nothing here yet.",
       page: "Page",
       of: "of",
+      remove: "Remove",
+      copy: "Copy",
+      copied: "Copied!",
+      open: "Open",
     },
     nav: {
       dashboard: "Dashboard",
@@ -199,6 +231,10 @@ export const translations = {
       cpf: "CPF",
       country: "Country",
       language: "Language",
+      languageMain: "Main language",
+      documentId: "ID / Passport",
+      documentIdPlaceholder: "Document number",
+      optionalTag: "(optional)",
       registeredAt: "Registration date",
       registeredAtShort: "Registered",
       source: "Registration source",
@@ -206,6 +242,16 @@ export const translations = {
       sourceDesk: "Front desk (staff)",
       detailsTitle: "Client details",
       empty: "No clients found.",
+      addPhoto: "Add photo",
+      changePhoto: "Change photo",
+      photoHint: "Take a photo or upload an image (JPG/PNG).",
+      selectRoom: "Select the room",
+      generateLink: "Generate link",
+      linkTitle: "Self-registration link",
+      linkDesc:
+        'Send this link to the guest. Once they fill it in and submit, the registration is automatically added to the system as "Self-registration (link)".',
+      linkNote:
+        "Simulation: the registration is saved in this browser (no database yet).",
       addSuccessTitle: "Success!",
       addSuccessDesc: "Client added successfully.",
       countries: {
@@ -295,6 +341,16 @@ export const translations = {
       comingSoon: "The full chat page is on its way.",
       placeholder:
         "Soon you'll be able to chat with guests directly from here.",
+    },
+    selfRegister: {
+      title: "Guest registration",
+      subtitle: "Fill in your details to complete your registration at HostelZim.",
+      submit: "Complete registration",
+      nameRequired: "Please enter your name to continue.",
+      successTitle: "Registration completed!",
+      successDesc:
+        "Your details were submitted successfully. You can close this page now.",
+      footer: "HostelZim · Secure registration",
     },
   },
 };

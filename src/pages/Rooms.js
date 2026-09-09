@@ -32,13 +32,7 @@ import {
 import { FiPlus, FiSearch, FiKey } from "react-icons/fi";
 import useToastService from "../services/ToastService";
 import { useI18n } from "../contexts/LanguageContext";
-
-const initialRooms = [
-  { name: "Quarto 101", capacity: 2, clients: 2, availableSpaces: 0, type: "male" },
-  { name: "Quarto 102", capacity: 3, clients: 1, availableSpaces: 2, type: "female" },
-  { name: "Quarto 103", capacity: 4, clients: 3, availableSpaces: 1, type: "mixed" },
-  { name: "Quarto 104", capacity: 5, clients: 5, availableSpaces: 0, type: "female" },
-];
+import { loadRooms, saveRooms } from "../data/store";
 
 const TYPE_COLORS = { male: "blue", female: "pink", mixed: "purple" };
 
@@ -46,7 +40,7 @@ function Rooms() {
   const { t } = useI18n();
   const { showSuccess } = useToastService();
   const [searchTerm, setSearchTerm] = useState("");
-  const [rooms, setRooms] = useState(initialRooms);
+  const [rooms, setRooms] = useState(loadRooms);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newRoom, setNewRoom] = useState({
     name: "",
@@ -68,8 +62,8 @@ function Rooms() {
   };
 
   const handleAddRoom = () => {
-    setRooms((prev) => [
-      ...prev,
+    const next = [
+      ...rooms,
       {
         name: newRoom.name,
         capacity: Number(newRoom.capacity) || 0,
@@ -77,7 +71,9 @@ function Rooms() {
         availableSpaces: Number(newRoom.availableSpaces) || 0,
         type: newRoom.type,
       },
-    ]);
+    ];
+    setRooms(next);
+    saveRooms(next);
     setNewRoom({
       name: "",
       capacity: "",
