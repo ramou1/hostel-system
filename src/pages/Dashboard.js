@@ -1,20 +1,23 @@
 import React, { useState } from "react";
-import "./Dashboard.css";
 import {
   Card,
   CardBody,
-  CardFooter,
   Heading,
   Text,
   Box,
   Avatar,
   Button,
-  ButtonGroup,
   IconButton,
   Flex,
   Spacer,
   Progress,
   Stack,
+  SimpleGrid,
+  Grid,
+  GridItem,
+  HStack,
+  Icon,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Line } from "react-chartjs-2";
 import {
@@ -24,7 +27,6 @@ import {
   MdRefresh,
   MdPieChart,
   MdStarRate,
-  MdEye,
 } from "react-icons/md";
 import { FiEye } from "react-icons/fi";
 import {
@@ -36,9 +38,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from "chart.js";
+import { useI18n } from "../contexts/LanguageContext";
 
-// Registrar os componentes necessários para o gráfico
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -46,35 +49,77 @@ ChartJS.register(
   PointElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
+// Card de indicador reutilizável
+function StatCard({ icon, iconBg, label, children }) {
+  return (
+    <Card>
+      <CardBody>
+        <Flex align="center" gap={4}>
+          <Flex
+            align="center"
+            justify="center"
+            boxSize="52px"
+            borderRadius="14px"
+            bg={iconBg}
+            flexShrink={0}
+          >
+            <Icon as={icon} boxSize={6} color="white" />
+          </Flex>
+          <Box minW={0} flex="1">
+            <Text fontSize="sm" color="gray.500" fontWeight={600} noOfLines={1}>
+              {label}
+            </Text>
+            {children}
+          </Box>
+        </Flex>
+      </CardBody>
+    </Card>
+  );
+}
+
 function Dashboard() {
+  const { t } = useI18n();
+
+  const axisColor = useColorModeValue("#4A5568", "#A0AEC0");
+  const gridColor = useColorModeValue("rgba(0,0,0,0.06)", "rgba(255,255,255,0.08)");
+  const mutedText = useColorModeValue("gray.500", "gray.400");
+
   const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: t("dashboard.months"),
     datasets: [
       {
-        label: "Monthly Revenue",
+        label: t("dashboard.monthlyRevenue"),
         data: [5000, 7000, 6000, 8000, 10000, 12000],
-        fill: false,
-        borderColor: "rgba(75, 192, 192, 1)",
-        tension: 0.1,
+        fill: true,
+        borderColor: "#f59e0b",
+        backgroundColor: "rgba(245, 158, 11, 0.12)",
+        pointBackgroundColor: "#f59e0b",
+        tension: 0.4,
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top" },
-      title: { display: false, text: "Revenue Overview" },
+      legend: { position: "top", labels: { color: axisColor } },
+      title: { display: false },
+    },
+    scales: {
+      x: { ticks: { color: axisColor }, grid: { color: gridColor } },
+      y: { ticks: { color: axisColor }, grid: { color: gridColor } },
     },
   };
 
   const users = [
-    { id: 1, name: "John Doe", avatar: "/path/to/avatar1.jpg" },
-    { id: 2, name: "Jane Smith", avatar: "/path/to/avatar2.jpg" },
-    { id: 3, name: "Alice Johnson", avatar: "/path/to/avatar3.jpg" },
+    { id: 1, name: "John Doe" },
+    { id: 2, name: "Jane Smith" },
+    { id: 3, name: "Alice Johnson" },
   ];
 
   const bookings = [
@@ -89,196 +134,190 @@ function Dashboard() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 5;
-
-  const handleRefresh = () => {
-    console.log("Refreshing users...");
-  };
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   const currentBookings = bookings.slice(
     (currentPage - 1) * bookingsPerPage,
     currentPage * bookingsPerPage
   );
 
   return (
-    <div className="dashboard-container">
-      <div className="card-container">
-        <Card boxShadow="md" width="33%">
-          <CardBody>
-            <Flex align="center">
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                bg="blue.200"
-                borderRadius="full"
-                p={3}
-              >
-                <MdAttachMoney size={22} color="white" />
-              </Box>
-              <div>
-                <Heading className="card-title" ml={4}>
-                  Monthly Sales
-                </Heading>
-                <Text ml={4} fontSize="25px" as="b" color="blue.300">
-                  R$ 32.545
-                </Text>
-              </div>
-            </Flex>
-          </CardBody>
-        </Card>
+    <Stack spacing={6}>
+      {/* Indicadores */}
+      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+        <StatCard
+          icon={MdAttachMoney}
+          iconBg="green.400"
+          label={t("dashboard.monthlySales")}
+        >
+          <Heading fontSize="2xl" color="green.400" mt={1}>
+            R$ 32.545
+          </Heading>
+        </StatCard>
 
-        <Card boxShadow="md" width="33%">
-          <CardBody>
-            <Flex align="center">
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                bg="blue.200"
-                borderRadius="full"
-                p={3}
-              >
-                <MdPieChart size={22} color="white" />
-              </Box>
+        <StatCard
+          icon={MdPieChart}
+          iconBg="brand.500"
+          label={t("dashboard.occupancyRate")}
+        >
+          <Flex align="center" gap={3} mt={2}>
+            <Progress
+              value={64}
+              colorScheme="brand"
+              borderRadius="full"
+              size="sm"
+              flex="1"
+              hasStripe
+            />
+            <Text fontWeight={700} fontSize="sm">
+              64%
+            </Text>
+          </Flex>
+        </StatCard>
 
-              <div>
-                <Heading className="card-title" ml={4}>
-                  Current Occupancy Rate
-                </Heading>
-                <Box ml={4} mt={4}>
-                  <Progress hasStripe value={64} colorScheme="blue" />
-                </Box>
-              </div>
-            </Flex>
-          </CardBody>
-        </Card>
+        <StatCard
+          icon={MdStarRate}
+          iconBg="yellow.400"
+          label={t("dashboard.customerFeedback")}
+        >
+          <Flex align="baseline" gap={1} mt={1}>
+            <Heading fontSize="3xl" color="yellow.500">
+              4.7
+            </Heading>
+            <Text fontSize="sm" color={mutedText}>
+              / 5
+            </Text>
+          </Flex>
+        </StatCard>
+      </SimpleGrid>
 
-        <Card boxShadow="md" width="33%">
-          <CardBody>
-            <Flex align="center">
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                bg="blue.200"
-                borderRadius="full"
-                p={3}
-              >
-                <MdStarRate size={22} color="white" />
-              </Box>
-              <div>
-                <Heading className="card-title" ml={4}>
-                  Customer Feedback
-                </Heading>
-                <Flex align="flex-end" justify="flex-start" ml={4}>
-                  <Text className="rate-text" color="blue.300">
-                    4.7
-                  </Text>
-                  <Text fontSize="sm" color="blue.800" ml={1}>
-                    /5
-                  </Text>
-                </Flex>
-              </div>
-            </Flex>
-          </CardBody>
-        </Card>
-      </div>
-
-      <div className="card-container">
-        <Card boxShadow="md" width="60%">
-          <CardBody>
-            <Flex justify="space-between" align="center" mb={4}>
-              <Heading className="card-title">Recent Users</Heading>
-              <Button
-                size="sm"
-                colorScheme="blue"
-                onClick={handleRefresh}
-                variant="ghost"
-                borderRadius="full"
-                p={1}
-              >
-                <MdRefresh size={24} />
-              </Button>
-            </Flex>
-            {users.map((user) => (
-              <Flex key={user.id} align="center" mb={4}>
-                <Avatar src={user.avatar} size="sm" mr={3} />
-                <Text>{user.name}</Text>
-                <Spacer />
-                <Button mr={2} size="sm" colorScheme="teal">
-                  <FiEye size={20} />
-                </Button>
-                <Button size="sm" colorScheme="yellow">
-                  Check Payment
-                </Button>
+      {/* Usuários recentes + Calendário */}
+      <Grid templateColumns={{ base: "1fr", lg: "3fr 2fr" }} gap={6}>
+        <GridItem>
+          <Card h="100%">
+            <CardBody>
+              <Flex justify="space-between" align="center" mb={4}>
+                <Heading fontSize="md">{t("dashboard.recentUsers")}</Heading>
+                <IconButton
+                  aria-label="refresh"
+                  icon={<MdRefresh size={20} />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="brand"
+                  borderRadius="full"
+                />
               </Flex>
-            ))}
-          </CardBody>
-        </Card>
+              <Stack spacing={3}>
+                {users.map((user) => (
+                  <Flex key={user.id} align="center" gap={3}>
+                    <Avatar name={user.name} size="sm" />
+                    <Text fontSize="sm" fontWeight={500}>
+                      {user.name}
+                    </Text>
+                    <Spacer />
+                    <IconButton
+                      aria-label={t("common.view")}
+                      icon={<FiEye />}
+                      size="sm"
+                      colorScheme="brand"
+                      variant="ghost"
+                    />
+                    <Button size="sm" colorScheme="brand" variant="outline">
+                      {t("dashboard.checkPayment")}
+                    </Button>
+                  </Flex>
+                ))}
+              </Stack>
+            </CardBody>
+          </Card>
+        </GridItem>
 
-        <Card boxShadow="md" width="40%">
-          <CardBody>
-            <Heading as="h2" className="card-title" mb={4}>
-              Calendar
-            </Heading>
-            <Text>Here is your calendar component</Text>
-          </CardBody>
-        </Card>
-      </div>
-
-      <div className="card-container">
-        {/* Card de Gráfico */}
-        <Card boxShadow="md" width="65%">
-          <CardBody>
-            <Heading as="h2" className="card-title" mb={4}>
-              Revenue Overview
-            </Heading>
-            <Line data={data} options={options} />
-          </CardBody>
-        </Card>
-
-        {/* Card de Pending Bookings */}
-        <Card boxShadow="md" width="35%">
-          <CardBody>
-            <Heading className="card-title" ml={4}>
-              Pending Bookings
-            </Heading>
-            <Stack spacing={3} ml={4} mt={2}>
-              {currentBookings.map((booking) => (
-                <Text key={booking.id}>
-                  {booking.name} - {booking.date}
-                </Text>
-              ))}
-            </Stack>
-
-            <Flex justify="space-between" mt={4}>
-              <Button
-                leftIcon={<MdArrowBack />}
-                size="sm"
-                colorScheme="blue"
-                onClick={() => paginate(currentPage - 1)}
-                isDisabled={currentPage === 1}
-                variant="outline"
+        <GridItem>
+          <Card h="100%">
+            <CardBody>
+              <Heading fontSize="md" mb={4}>
+                {t("dashboard.calendar")}
+              </Heading>
+              <Flex
+                align="center"
+                justify="center"
+                h="calc(100% - 40px)"
+                minH="140px"
+                color={mutedText}
+                fontSize="sm"
+                textAlign="center"
               >
-                Previous
-              </Button>
-              <Button
-                rightIcon={<MdArrowForward />}
-                size="sm"
-                colorScheme="blue"
-                onClick={() => paginate(currentPage + 1)}
-                isDisabled={currentBookings.length < bookingsPerPage}
-                variant="outline"
-              >
-                Next
-              </Button>
-            </Flex>
-          </CardBody>
-        </Card>
-      </div>
-    </div>
+                {t("dashboard.calendarPlaceholder")}
+              </Flex>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </Grid>
+
+      {/* Gráfico de receita + Reservas pendentes */}
+      <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
+        <GridItem>
+          <Card h="100%">
+            <CardBody>
+              <Heading fontSize="md" mb={4}>
+                {t("dashboard.revenueOverview")}
+              </Heading>
+              <Box h="300px">
+                <Line data={data} options={options} />
+              </Box>
+            </CardBody>
+          </Card>
+        </GridItem>
+
+        <GridItem>
+          <Card h="100%">
+            <CardBody>
+              <Heading fontSize="md" mb={4}>
+                {t("dashboard.pendingBookings")}
+              </Heading>
+              <Stack spacing={3}>
+                {currentBookings.map((booking) => (
+                  <Flex
+                    key={booking.id}
+                    justify="space-between"
+                    align="center"
+                  >
+                    <Text fontSize="sm" fontWeight={500}>
+                      {booking.name}
+                    </Text>
+                    <Text fontSize="xs" color={mutedText}>
+                      {booking.date}
+                    </Text>
+                  </Flex>
+                ))}
+              </Stack>
+
+              <HStack justify="space-between" mt={5}>
+                <Button
+                  leftIcon={<MdArrowBack />}
+                  size="sm"
+                  variant="outline"
+                  colorScheme="brand"
+                  onClick={() => paginate(currentPage - 1)}
+                  isDisabled={currentPage === 1}
+                >
+                  {t("common.previous")}
+                </Button>
+                <Button
+                  rightIcon={<MdArrowForward />}
+                  size="sm"
+                  variant="outline"
+                  colorScheme="brand"
+                  onClick={() => paginate(currentPage + 1)}
+                  isDisabled={currentBookings.length < bookingsPerPage}
+                >
+                  {t("common.next")}
+                </Button>
+              </HStack>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </Grid>
+    </Stack>
   );
 }
 

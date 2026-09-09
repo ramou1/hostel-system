@@ -1,129 +1,123 @@
+import React, { useState, useEffect } from "react";
 import {
-  ChakraProvider,
   Box,
-  Flex,
   IconButton,
-  useColorMode,
-  ButtonGroup,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { FiHome, FiUsers, FiKey, FiSun, FiMoon, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Rooms from "./pages/Rooms";
-import { Route, Routes, Link } from "react-router-dom";
+import Messages from "./pages/Messages";
 import Header from "./components/Header";
-import { useState } from "react";
+import Sidebar from "./components/Sidebar";
 import "./App.css";
 
-function App() {
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
-  const { colorMode, toggleColorMode } = useColorMode(); // Corrigir para usar toggleColorMode
+const PROFILE_KEY = "hostelzim:profile";
 
-  const handleMenuToggle = () => {
-    setIsMenuCollapsed((prev) => !prev);
-  };
+const DEFAULT_PROFILE = {
+  name: "Admin HostelZim",
+  email: "admin@hostelzim.com",
+  photo: "",
+  emailNotifications: true,
+};
+
+function loadProfile() {
+  try {
+    const saved = localStorage.getItem(PROFILE_KEY);
+    return saved ? { ...DEFAULT_PROFILE, ...JSON.parse(saved) } : DEFAULT_PROFILE;
+  } catch {
+    return DEFAULT_PROFILE;
+  }
+}
+
+function App() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [profile, setProfile] = useState(loadProfile);
+  const mobileNav = useDisclosure();
+
+  useEffect(() => {
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  }, [profile]);
+
+  const sidebarWidth = collapsed ? "84px" : "248px";
+  const contentBg = useColorModeValue("gray.50", "gray.900");
+  const toggleBg = useColorModeValue("white", "gray.700");
+  const toggleColor = useColorModeValue("gray.600", "gray.200");
 
   return (
-    <ChakraProvider>
-      <Flex className="app-container">
-        <Box
-          as="nav"
-          className={`sidebar ${isMenuCollapsed ? "collapsed" : ""}`}
-        >
-          <Flex className="menu-header">
-            <img
-              src="/images/logo-collapsed.png"
-              alt="Collapsed Logo"
-              className={`logo ${
-                isMenuCollapsed ? "collapsed-logo" : "full-logo"
-              }`}
-            />
-            <IconButton
-              aria-label={isMenuCollapsed ? "Expand Menu" : "Collapse Menu"}
-              icon={isMenuCollapsed ? <FiChevronRight /> : <FiChevronLeft />}
-              onClick={handleMenuToggle}
-              variant="solid"
-              colorScheme="blue"
-              className="collapse-btn"
-              borderRadius="full"
-              size="sm"
-              fontSize="16px"
-            />
-          </Flex>
-          <ul>
-            <li>
-              <Link
-                to="/"
-                className={`menu-item ${
-                  window.location.pathname === "/" ? "active" : ""
-                }`}
-              >
-                <FiHome size={20} />
-                {!isMenuCollapsed && "Dashboard"}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/clients"
-                className={`menu-item ${
-                  window.location.pathname === "/clients" ? "active" : ""
-                }`}
-              >
-                <FiUsers size={20} />
-                {!isMenuCollapsed && "Clients"}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/rooms"
-                className={`menu-item ${
-                  window.location.pathname === "/rooms" ? "active" : ""
-                }`}
-              >
-                <FiKey size={20} />
-                {!isMenuCollapsed && "Rooms"}
-              </Link>
-            </li>
-          </ul>
-          <Box className="footer">
-            {/* Mostrar ambos os ícones quando o menu estiver expandido */}
-            {isMenuCollapsed ? (
-              // Mostrar apenas o ícone ativo quando o menu estiver retraído
-              <IconButton
-                icon={colorMode === "light" ? <FiSun /> : <FiMoon />}
-                aria-label="Toggle color mode"
-                onClick={toggleColorMode}
-              />
-            ) : (
-              // Mostrar ambos os ícones quando o menu estiver expandido
-              <ButtonGroup isAttached>
-                <IconButton
-                  icon={<FiSun />}
-                  aria-label="Light mode"
-                  onClick={() => colorMode === "dark" && toggleColorMode()}
-                  isDisabled={colorMode === "light"}
-                />
-                <IconButton
-                  icon={<FiMoon />}
-                  aria-label="Dark mode"
-                  onClick={() => colorMode === "light" && toggleColorMode()}
-                  isDisabled={colorMode === "dark"}
-                />
-              </ButtonGroup>
-            )}
-          </Box>
-        </Box>
+    <Box minH="100vh" bg={contentBg}>
+      {/* Sidebar fixa (desktop) */}
+      <Box
+        position="fixed"
+        top={0}
+        left={0}
+        h="100vh"
+        w={sidebarWidth}
+        display={{ base: "none", md: "block" }}
+        transition="width 0.2s ease"
+        zIndex={20}
+      >
+        <Sidebar collapsed={collapsed} />
+        <IconButton
+          aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+          icon={collapsed ? <FiChevronRight /> : <FiChevronLeft />}
+          size="sm"
+          borderRadius="full"
+          bg={toggleBg}
+          color={toggleColor}
+          boxShadow="md"
+          position="absolute"
+          top="28px"
+          right="-14px"
+          onClick={() => setCollapsed((prev) => !prev)}
+          _hover={{ bg: "brand.500", color: "white" }}
+        />
+      </Box>
 
-        <Box className={`page-content ${isMenuCollapsed ? "collapsed" : ""}`}>
-          <Header />
+      {/* Drawer (mobile) */}
+      <Drawer
+        isOpen={mobileNav.isOpen}
+        placement="left"
+        onClose={mobileNav.onClose}
+      >
+        <DrawerOverlay />
+        <DrawerContent maxW="248px">
+          <Sidebar collapsed={false} onNavigate={mobileNav.onClose} />
+        </DrawerContent>
+      </Drawer>
+
+      {/* Conteúdo */}
+      <Box
+        ml={{ base: 0, md: sidebarWidth }}
+        transition="margin-left 0.2s ease"
+        minH="100vh"
+      >
+        <Box
+          px={{ base: 4, md: 8 }}
+          py={{ base: 4, md: 6 }}
+          maxW="1440px"
+          mx="auto"
+        >
+          <Header
+            onOpenMenu={mobileNav.onOpen}
+            profile={profile}
+            onSaveProfile={setProfile}
+          />
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/rooms" element={<Rooms />} />
+            <Route path="/messages" element={<Messages />} />
           </Routes>
         </Box>
-      </Flex>
-    </ChakraProvider>
+      </Box>
+    </Box>
   );
 }
 
