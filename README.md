@@ -1,6 +1,12 @@
 # Hostely - Plataforma de gerenciamento de hostels
 
-![Painel Hostely](https://i.imgur.com/ECO1cc6.png)
+![Landing Page Hostely](https://i.imgur.com/W1qYWWW.png)
+
+![Login Hostely](https://i.imgur.com/vHuZBFo.png)
+
+![Painel Hostely](https://i.imgur.com/HILlcyL.png)
+
+![Configurações Hostely](https://i.imgur.com/jo08kSD.png)
 
 ## Descrição
 
