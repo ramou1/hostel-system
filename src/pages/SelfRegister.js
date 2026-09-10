@@ -62,13 +62,13 @@ function SelfRegister() {
         <Flex direction="column" align="center" mb={6}>
           <Image
             src="/images/logo-collapsed.png"
-            alt="HostelZim"
+            alt="Hostely"
             boxSize="52px"
             objectFit="contain"
             mb={2}
           />
           <Text fontSize="xl" fontWeight={800} letterSpacing="-0.02em">
-            Hostel<Box as="span" color="brand.500">Zim</Box>
+            Hostel<Box as="span" color="brand.500">y</Box>
           </Text>
         </Flex>
 

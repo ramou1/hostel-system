@@ -5,6 +5,7 @@ import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import App from "./App";
 import theme from "./theme";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -14,9 +15,11 @@ root.render(
     <ColorModeScript initialColorMode={theme.config.initialColorMode} />
     <ChakraProvider theme={theme}>
       <LanguageProvider>
-        <Router>
-          <App />
-        </Router>
+        <AuthProvider>
+          <Router>
+            <App />
+          </Router>
+        </AuthProvider>
       </LanguageProvider>
     </ChakraProvider>
   </React.StrictMode>

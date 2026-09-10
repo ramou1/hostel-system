@@ -15,23 +15,34 @@ import Clients from "./pages/Clients";
 import Rooms from "./pages/Rooms";
 import Messages from "./pages/Messages";
 import SelfRegister from "./pages/SelfRegister";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+import RequireAuth from "./components/RequireAuth";
 import "./App.css";
 
 const PROFILE_KEY = "hostelzim:profile";
 
 const DEFAULT_PROFILE = {
-  name: "Admin HostelZim",
-  email: "admin@hostelzim.com",
+  name: "Admin Pé na Areia",
+  email: "admin@hostely.com",
   photo: "",
   emailNotifications: true,
 };
 
+// Nomes antigos que devem ser migrados para o nome padrão atual
+const LEGACY_NAMES = ["Admin HostelZim", "Admin Hostely"];
+
 function loadProfile() {
   try {
     const saved = localStorage.getItem(PROFILE_KEY);
-    return saved ? { ...DEFAULT_PROFILE, ...JSON.parse(saved) } : DEFAULT_PROFILE;
+    if (!saved) return DEFAULT_PROFILE;
+    const merged = { ...DEFAULT_PROFILE, ...JSON.parse(saved) };
+    if (LEGACY_NAMES.includes(merged.name)) {
+      merged.name = DEFAULT_PROFILE.name;
+    }
+    return merged;
   } catch {
     return DEFAULT_PROFILE;
   }
@@ -121,15 +132,24 @@ function AppShell() {
 function App() {
   return (
     <Routes>
-      {/* Tela pública de auto-cadastro (sem sidebar/header) */}
+      {/* Páginas públicas */}
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/cadastro/:token" element={<SelfRegister />} />
 
-      {/* Área administrativa */}
-      <Route element={<AppShell />}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/clients" element={<Clients />} />
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/messages" element={<Messages />} />
+      {/* Área administrativa (protegida por login) */}
+      <Route
+        path="/app"
+        element={
+          <RequireAuth>
+            <AppShell />
+          </RequireAuth>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route path="clients" element={<Clients />} />
+        <Route path="rooms" element={<Rooms />} />
+        <Route path="messages" element={<Messages />} />
       </Route>
     </Routes>
   );

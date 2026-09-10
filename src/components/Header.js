@@ -31,15 +31,16 @@ import {
   FiLogOut,
   FiMenu,
 } from "react-icons/fi";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
+import { useAuth } from "../contexts/AuthContext";
 import SettingsModal from "./SettingsModal";
 
 const TITLE_MAP = {
-  "/": "nav.dashboard",
-  "/clients": "nav.clients",
-  "/rooms": "nav.rooms",
-  "/messages": "nav.messages",
+  "/app": "nav.dashboard",
+  "/app/clients": "nav.clients",
+  "/app/rooms": "nav.rooms",
+  "/app/messages": "nav.messages",
 };
 
 // Item de mensagem no popover
@@ -89,7 +90,14 @@ function NotificationRow({ item, hoverBg, dotColor }) {
 function Header({ onOpenMenu, profile, onSaveProfile }) {
   const { t } = useI18n();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const settings = useDisclosure();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
   const pageTitle = t(TITLE_MAP[location.pathname] || "nav.dashboard");
   const messages = t("header.messages.items");
@@ -242,7 +250,7 @@ function Header({ onOpenMenu, profile, onSaveProfile }) {
               <MenuItem icon={<FiSettings />} onClick={settings.onOpen}>
                 {t("header.profile.settings")}
               </MenuItem>
-              <MenuItem icon={<FiLogOut />} color="red.400">
+              <MenuItem icon={<FiLogOut />} color="red.400" onClick={handleLogout}>
                 {t("header.profile.logout")}
               </MenuItem>
             </MenuList>

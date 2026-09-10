@@ -6,6 +6,7 @@ import {
   Text,
   Icon,
   Image,
+  Avatar,
   Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -68,12 +69,16 @@ function Sidebar({ collapsed = false, onNavigate }) {
   const bg = useColorModeValue("white", "gray.800");
   const border = useColorModeValue("gray.100", "gray.700");
   const brandText = useColorModeValue("gray.800", "white");
+  const tenantBg = useColorModeValue("gray.50", "whiteAlpha.100");
+
+  // Hostel fictício atualmente selecionado (futuro seletor multi-hostel)
+  const currentHostel = "Hostel Pé na Areia";
 
   const items = [
-    { to: "/", icon: FiHome, label: t("nav.dashboard"), end: true },
-    { to: "/clients", icon: FiUsers, label: t("nav.clients") },
-    { to: "/rooms", icon: FiKey, label: t("nav.rooms") },
-    { to: "/messages", icon: FiMessageSquare, label: t("nav.messages") },
+    { to: "/app", icon: FiHome, label: t("nav.dashboard"), end: true },
+    { to: "/app/clients", icon: FiUsers, label: t("nav.clients") },
+    { to: "/app/rooms", icon: FiKey, label: t("nav.rooms") },
+    { to: "/app/messages", icon: FiMessageSquare, label: t("nav.messages") },
   ];
 
   return (
@@ -97,7 +102,7 @@ function Sidebar({ collapsed = false, onNavigate }) {
       >
         <Image
           src="/images/logo-collapsed.png"
-          alt="HostelZim"
+          alt="Hostely"
           boxSize="36px"
           objectFit="contain"
         />
@@ -108,10 +113,37 @@ function Sidebar({ collapsed = false, onNavigate }) {
             color={brandText}
             letterSpacing="-0.02em"
           >
-            Hostel<Box as="span" color="brand.500">Zim</Box>
+            Hostel<Box as="span" color="brand.500">y</Box>
           </Text>
         )}
       </Flex>
+
+      {/* Hostel selecionado */}
+      {collapsed ? (
+        <Tooltip label={currentHostel} placement="right" hasArrow openDelay={200}>
+          <Flex justify="center" mb={6}>
+            <Avatar size="sm" name={currentHostel} bg="brand.500" color="white" />
+          </Flex>
+        </Tooltip>
+      ) : (
+        <Flex align="center" gap={2.5} bg={tenantBg} borderRadius="12px" p={2.5} mb={6}>
+          <Avatar size="sm" name={currentHostel} bg="brand.500" color="white" />
+          <Box lineHeight="1.2" overflow="hidden">
+            <Text
+              fontSize="10px"
+              color="gray.500"
+              textTransform="uppercase"
+              letterSpacing="wider"
+              fontWeight={700}
+            >
+              Hostel
+            </Text>
+            <Text fontSize="sm" fontWeight={700} color={brandText} noOfLines={1}>
+              {currentHostel}
+            </Text>
+          </Box>
+        </Flex>
+      )}
 
       {/* Navegação */}
       <VStack spacing={1} align="stretch" flex="1">
@@ -128,7 +160,7 @@ function Sidebar({ collapsed = false, onNavigate }) {
       {/* Rodapé */}
       {!collapsed && (
         <Text fontSize="xs" color="gray.500" px={2} pt={4}>
-          © {new Date().getFullYear()} HostelZim
+          © {new Date().getFullYear()} Hostely
         </Text>
       )}
     </Flex>

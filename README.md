@@ -1,12 +1,12 @@
-# HostelZim - Um sistema para controle de hostel
+# Hostely - Plataforma de gerenciamento de hostels
 
-![Painel HostelZim](https://i.imgur.com/ECO1cc6.png)
+![Painel Hostely](https://i.imgur.com/ECO1cc6.png)
 
 ## Descrição
 
-HostelZim é um sistema web desenvolvido para o gerenciamento de hostels. Construído com React e Chakra UI, o sistema oferece uma interface moderna, responsiva e intuitiva para a administração do dia a dia de um hostel. Através de um painel central, os administradores conseguem acompanhar indicadores importantes, gerenciar quartos e clientes, além de visualizar dados como receita mensal e taxa de ocupação por meio de gráficos.
+Hostely é uma plataforma web para gestão de hostels, pensada para atender de uma única unidade a redes com vários hostels. Construída com React e Chakra UI, oferece uma interface moderna, responsiva e intuitiva para a administração do dia a dia. Através de um painel central, os administradores acompanham indicadores importantes, gerenciam quartos e hóspedes, e visualizam dados como receita mensal e taxa de ocupação por meio de gráficos.
 
-O projeto conta com navegação por menu lateral retrátil, suporte a tema claro/escuro e notificações (toasts) para dar feedback das ações realizadas.
+O projeto conta com uma landing page de apresentação, login com "manter conectado", auto-cadastro de hóspedes por link, navegação por menu lateral retrátil, internacionalização (português/inglês), suporte a tema claro/escuro e notificações (toasts) para dar feedback das ações realizadas.
 
 > **Observação:** atualmente os dados exibidos são mockados (definidos diretamente no código), servindo como base para a interface. Não há integração com back-end/API neste momento.
 
@@ -23,6 +23,13 @@ O projeto conta com navegação por menu lateral retrátil, suporte a tema claro
 
 ## Funcionalidades
 
+### Landing page & acesso
+- Página inicial (landing) apresentando a plataforma, recursos e planos
+- Cabeçalho transparente com efeito de blur ao rolar a página
+- Login com credenciais mockadas e opção "manter conectado"
+- Rotas administrativas protegidas por autenticação (redirecionam para o login)
+- Credenciais de demonstração: `admin@hostely.com` / `hostel123`
+
 ### Dashboard
 - Cards de indicadores: vendas mensais, taxa de ocupação e avaliação dos clientes
 - Lista de usuários recentes com ação de verificar pagamento
@@ -31,9 +38,12 @@ O projeto conta com navegação por menu lateral retrátil, suporte a tema claro
 - Área de calendário (placeholder)
 
 ### Clientes
-- Listagem de clientes em tabela
-- Busca de clientes por nome
-- Cadastro de novos clientes via modal (foto, nome, e-mail, telefone, quarto e CPF)
+- Listagem de clientes em tabela, ordenada por cadastro mais recente, com paginação
+- Colunas de país e data de cadastro; foto ao lado do nome
+- Detalhes do cliente ao clicar (inclui idioma e origem do cadastro)
+- Cadastro no balcão via modal (foto por upload/câmera, nome, e-mail, telefone, quarto, CPF opcional, documento/ID, país e idioma principal)
+- Auto-cadastro por link: geração de link que abre uma tela pública de cadastro do próprio hóspede
+- Origem do cadastro identificada como "Atendimento (balcão)" ou "Auto-cadastro (link)"
 - Imagem de perfil padrão automática quando a foto falha ao carregar
 
 ### Quartos
@@ -43,18 +53,25 @@ O projeto conta com navegação por menu lateral retrátil, suporte a tema claro
 - Tipos de quarto: Masculino, Feminino e Misto
 
 ### Geral
-- Menu lateral retrátil (expandir/recolher)
-- Alternância entre tema claro e escuro
+- Menu lateral retrátil (expandir/recolher) com o hostel selecionado em destaque
+- Internacionalização: português (padrão) e inglês
+- Alternância entre tema claro e escuro (escuro como padrão)
 - Notificações (toasts) de sucesso, erro, aviso e informação
-- Cabeçalho com título dinâmico da página, ícones de mensagens/notificações e avatar
+- Cabeçalho com título dinâmico da página, ícones de mensagens/notificações e menu de perfil (configurações e sair)
+
+> **Observação:** por enquanto os dados são simulados via `localStorage` (sem back-end/API). O login e o auto-cadastro por link são mockados para demonstração.
 
 ## Estrutura do Projeto
 
 ```
 src/
-├── components/       # Componentes reutilizáveis (Header, Button)
-├── pages/            # Páginas da aplicação (Dashboard, Clients, Rooms)
+├── components/       # Componentes reutilizáveis (Header, Sidebar, RequireAuth, etc.)
+├── contexts/         # Contextos de React (autenticação, idioma)
+├── data/             # Camada de dados simulada em localStorage (store)
+├── i18n/             # Dicionário de traduções (pt/en)
+├── pages/            # Páginas (Landing, Login, Dashboard, Clients, Rooms, SelfRegister)
 ├── services/         # Serviços auxiliares (ToastService)
+├── theme.js          # Tema do Chakra UI (marca, modo escuro padrão)
 ├── App.js            # Layout principal, menu lateral e rotas
 └── index.js          # Ponto de entrada da aplicação
 ```

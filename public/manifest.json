@@ -1,6 +1,6 @@
 {
-  "short_name": "HostelZim",
-  "name": "HostemZim",
+  "short_name": "Hostely",
+  "name": "Hostely - Plataforma de gerenciamento de hostels",
   "icons": [
     {
       "src": "favicon.ico",

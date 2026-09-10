@@ -2,7 +2,7 @@
 export const translations = {
   pt: {
     common: {
-      appName: "HostelZim",
+      appName: "Hostely",
       save: "Salvar",
       cancel: "Cancelar",
       close: "Fechar",
@@ -167,19 +167,103 @@ export const translations = {
     },
     selfRegister: {
       title: "Cadastro de hóspede",
-      subtitle: "Preencha seus dados para concluir o seu cadastro no HostelZim.",
+      subtitle: "Preencha seus dados para concluir o seu cadastro no Hostely.",
       submit: "Concluir cadastro",
       nameRequired: "Por favor, informe seu nome para continuar.",
       successTitle: "Cadastro concluído!",
       successDesc:
         "Seus dados foram enviados com sucesso. Você já pode fechar esta página.",
-      footer: "HostelZim · Cadastro seguro",
+      footer: "Hostely · Cadastro seguro",
+    },
+    landing: {
+      signIn: "Entrar",
+      goToApp: "Acessar painel",
+      hero: {
+        badge: "Plataforma para redes de hostels",
+        title: "Gerencie todos os seus hostels em um só lugar",
+        subtitle:
+          "Reservas, quartos, hóspedes e faturamento — tudo integrado, em qualquer idioma, com auto-cadastro de hóspedes por link.",
+        ctaPrimary: "Começar agora",
+        ctaSecondary: "Ver planos",
+      },
+      features: {
+        title: "Tudo que seu hostel precisa",
+        subtitle: "Ferramentas simples e poderosas para o dia a dia.",
+        items: [
+          {
+            title: "Gestão de quartos",
+            text: "Controle capacidade, ocupação e tipos de quarto em tempo real.",
+          },
+          {
+            title: "Hóspedes e auto-cadastro",
+            text: "Envie um link e deixe o próprio hóspede preencher os dados.",
+          },
+          {
+            title: "Painel e indicadores",
+            text: "Receita, ocupação e avaliações num relance.",
+          },
+          {
+            title: "Multi-hostel e multi-idioma",
+            text: "Escale para várias unidades e atenda em português e inglês.",
+          },
+        ],
+      },
+      pricing: {
+        title: "Planos para cada tamanho de operação",
+        subtitle: "Comece grátis e evolua conforme sua rede cresce.",
+        perMonth: "/mês",
+        mostPopular: "Mais popular",
+        cta: "Assinar",
+        plans: [
+          {
+            name: "Básico",
+            price: "R$ 0",
+            desc: "Para começar",
+            features: ["1 hostel", "Até 30 quartos", "Cadastro de hóspedes", "Suporte por e-mail"],
+          },
+          {
+            name: "Pro",
+            price: "R$ 149",
+            desc: "Para hostels em crescimento",
+            features: [
+              "Até 5 hostels",
+              "Quartos ilimitados",
+              "Auto-cadastro por link",
+              "Relatórios avançados",
+              "Suporte prioritário",
+            ],
+          },
+          {
+            name: "Enterprise",
+            price: "Sob consulta",
+            desc: "Para redes",
+            features: [
+              "Hostels ilimitados",
+              "Multiusuário",
+              "Integrações",
+              "Gerente de contas dedicado",
+            ],
+          },
+        ],
+      },
+      footer: "Feito para quem vive de hospitalidade.",
+    },
+    auth: {
+      loginTitle: "Entrar",
+      loginSubtitle: "Acesse o painel da sua rede de hostels.",
+      email: "E-mail",
+      password: "Senha",
+      keepConnected: "Manter conectado",
+      submit: "Entrar",
+      invalid: "E-mail ou senha inválidos.",
+      demoHint: "Demonstração — use estas credenciais:",
+      backHome: "Voltar para a página inicial",
     },
   },
 
   en: {
     common: {
-      appName: "HostelZim",
+      appName: "Hostely",
       save: "Save",
       cancel: "Cancel",
       close: "Close",
@@ -344,13 +428,97 @@ export const translations = {
     },
     selfRegister: {
       title: "Guest registration",
-      subtitle: "Fill in your details to complete your registration at HostelZim.",
+      subtitle: "Fill in your details to complete your registration at Hostely.",
       submit: "Complete registration",
       nameRequired: "Please enter your name to continue.",
       successTitle: "Registration completed!",
       successDesc:
         "Your details were submitted successfully. You can close this page now.",
-      footer: "HostelZim · Secure registration",
+      footer: "Hostely · Secure registration",
+    },
+    landing: {
+      signIn: "Sign in",
+      goToApp: "Go to dashboard",
+      hero: {
+        badge: "Platform for hostel chains",
+        title: "Manage all your hostels in one place",
+        subtitle:
+          "Bookings, rooms, guests and billing — all integrated, in any language, with guest self-registration by link.",
+        ctaPrimary: "Get started",
+        ctaSecondary: "See plans",
+      },
+      features: {
+        title: "Everything your hostel needs",
+        subtitle: "Simple, powerful tools for the everyday.",
+        items: [
+          {
+            title: "Room management",
+            text: "Track capacity, occupancy and room types in real time.",
+          },
+          {
+            title: "Guests & self-registration",
+            text: "Send a link and let the guest fill in their own details.",
+          },
+          {
+            title: "Dashboard & insights",
+            text: "Revenue, occupancy and ratings at a glance.",
+          },
+          {
+            title: "Multi-hostel & multi-language",
+            text: "Scale to multiple units and serve in Portuguese and English.",
+          },
+        ],
+      },
+      pricing: {
+        title: "Plans for every operation size",
+        subtitle: "Start free and grow as your chain expands.",
+        perMonth: "/mo",
+        mostPopular: "Most popular",
+        cta: "Subscribe",
+        plans: [
+          {
+            name: "Basic",
+            price: "$0",
+            desc: "To get started",
+            features: ["1 hostel", "Up to 30 rooms", "Guest registration", "Email support"],
+          },
+          {
+            name: "Pro",
+            price: "$29",
+            desc: "For growing hostels",
+            features: [
+              "Up to 5 hostels",
+              "Unlimited rooms",
+              "Self-registration link",
+              "Advanced reports",
+              "Priority support",
+            ],
+          },
+          {
+            name: "Enterprise",
+            price: "Custom",
+            desc: "For chains",
+            features: [
+              "Unlimited hostels",
+              "Multi-user",
+              "Integrations",
+              "Dedicated account manager",
+            ],
+          },
+        ],
+      },
+      footer: "Built for people who live off hospitality.",
+    },
+    auth: {
+      loginTitle: "Sign in",
+      loginSubtitle: "Access your hostel chain dashboard.",
+      email: "Email",
+      password: "Password",
+      keepConnected: "Keep me signed in",
+      submit: "Sign in",
+      invalid: "Invalid email or password.",
+      demoHint: "Demo — use these credentials:",
+      backHome: "Back to home",
     },
   },
 };
