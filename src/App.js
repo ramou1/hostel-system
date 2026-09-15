@@ -13,6 +13,8 @@ import { Route, Routes, Outlet } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Rooms from "./pages/Rooms";
+import Hostel from "./pages/Hostel";
+import Rentals from "./pages/Rentals";
 import SelfRegister from "./pages/SelfRegister";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -150,8 +152,10 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="hostel" element={<Hostel />} />
           <Route path="clients" element={<Clients />} />
           <Route path="rooms" element={<Rooms />} />
+          <Route path="rentals" element={<Rentals />} />
         </Route>
       </Routes>
     </>

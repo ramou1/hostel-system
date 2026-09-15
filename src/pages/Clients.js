@@ -50,7 +50,9 @@ import ClientFormFields from "../components/ClientFormFields";
 import {
   loadClients,
   loadRooms,
+  loadLockers,
   addClient,
+  assignLockerToClient,
   SOURCE,
   STORAGE_KEYS,
 } from "../data/store";
@@ -67,6 +69,7 @@ const EMPTY_CLIENT = {
   photo: "",
   country: "BR",
   language: "pt",
+  lockerId: "",
 };
 
 // Badge que representa a origem do cadastro (link x balcão)
@@ -113,6 +116,7 @@ function Clients() {
 
   const [clients, setClients] = useState(loadClients);
   const [rooms, setRooms] = useState(loadRooms);
+  const [lockers, setLockers] = useState(loadLockers);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -129,6 +133,7 @@ function Clients() {
     const onStorage = (e) => {
       if (e.key === STORAGE_KEYS.CLIENTS_KEY) setClients(loadClients());
       if (e.key === STORAGE_KEYS.ROOMS_KEY) setRooms(loadRooms());
+      if (e.key === STORAGE_KEYS.LOCKERS_KEY) setLockers(loadLockers());
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
@@ -172,16 +177,33 @@ function Clients() {
 
   // Cadastro pelo balcão: origem definida automaticamente como "desk"
   const handleAddClient = () => {
+    const lockerId = newClient.lockerId || "";
     const next = addClient({
       ...newClient,
+      lockerId,
       source: SOURCE.DESK,
       registeredAt: new Date().toISOString(),
     });
-    setClients(next);
+    if (lockerId) {
+      const { lockers: nextLockers, clients: synced } = assignLockerToClient(
+        lockerId,
+        newClient.name
+      );
+      setLockers(nextLockers);
+      setClients(synced);
+    } else {
+      setClients(next);
+    }
     setNewClient(EMPTY_CLIENT);
     setPage(1);
     addModal.onClose();
     showSuccess(t("clients.addSuccessTitle"), t("clients.addSuccessDesc"));
+  };
+
+  const lockerCodeOf = (lockerId) => {
+    if (!lockerId) return "—";
+    const found = lockers.find((lk) => lk.id === lockerId);
+    return found?.code || "—";
   };
 
   const openDetails = (client) => {
@@ -381,6 +403,9 @@ function Clients() {
                 <InfoField label={t("clients.room")}>
                   {selectedClient.room || "—"}
                 </InfoField>
+                <InfoField label={t("clients.locker")}>
+                  {lockerCodeOf(selectedClient.lockerId)}
+                </InfoField>
                 <InfoField label={t("clients.cpf")}>
                   {selectedClient.cpf || "—"}
                 </InfoField>
@@ -416,6 +441,7 @@ function Clients() {
               values={newClient}
               setField={setNewClientField}
               rooms={rooms}
+              lockers={lockers}
             />
           </ModalBody>
           <ModalFooter gap={3}>

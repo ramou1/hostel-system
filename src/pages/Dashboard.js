@@ -221,9 +221,6 @@ function Dashboard() {
                       colorScheme="brand"
                       variant="ghost"
                     />
-                    <Button size="sm" colorScheme="brand" variant="outline">
-                      {t("dashboard.checkPayment")}
-                    </Button>
                   </Flex>
                 ))}
               </Stack>

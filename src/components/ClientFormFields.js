@@ -13,10 +13,15 @@ import { COUNTRY_OPTIONS, LANGUAGE_OPTIONS } from "../data/store";
 
 // Campos compartilhados entre o cadastro no balcão e o auto-cadastro (link).
 // `values` é o objeto do cliente e `setField(name, value)` atualiza um campo.
-function ClientFormFields({ values, setField, rooms = [] }) {
+// `lockers` é opcional — quando presente, permite associar um armário.
+function ClientFormFields({ values, setField, rooms = [], lockers = [] }) {
   const { t } = useI18n();
 
   const handle = (e) => setField(e.target.name, e.target.value);
+
+  const availableLockers = lockers.filter(
+    (lk) => !lk.clientName || lk.id === values.lockerId
+  );
 
   return (
     <Box>
@@ -69,6 +74,25 @@ function ClientFormFields({ values, setField, rooms = [] }) {
             {rooms.map((room) => (
               <option key={room.name} value={room.name}>
                 {room.name}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize="sm">
+            {t("clients.locker")} {t("clients.optionalTag")}
+          </FormLabel>
+          <Select
+            name="lockerId"
+            placeholder={t("clients.selectLocker")}
+            value={values.lockerId || ""}
+            onChange={handle}
+          >
+            <option value="">{t("clients.noLocker")}</option>
+            {availableLockers.map((lk) => (
+              <option key={lk.id} value={lk.id}>
+                {lk.code}
               </option>
             ))}
           </Select>

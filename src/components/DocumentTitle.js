@@ -6,8 +6,10 @@ const ROUTE_TITLES = {
   "/": "seo.homeTitle",
   "/login": "seo.loginTitle",
   "/app": "seo.dashboardTitle",
+  "/app/hostel": "seo.hostelTitle",
   "/app/clients": "seo.clientsTitle",
   "/app/rooms": "seo.roomsTitle",
+  "/app/rentals": "seo.rentalsTitle",
 };
 
 function DocumentTitle() {

@@ -32,8 +32,10 @@ import SettingsModal from "./SettingsModal";
 
 const TITLE_MAP = {
   "/app": "nav.dashboard",
+  "/app/hostel": "nav.hostel",
   "/app/clients": "nav.clients",
   "/app/rooms": "nav.rooms",
+  "/app/rentals": "nav.rentals",
 };
 
 // Item de notificação no popover

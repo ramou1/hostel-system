@@ -10,11 +10,11 @@
 
 ## Descrição
 
-Hostely é uma plataforma web para gestão de hostels, pensada para atender de uma única unidade a redes com vários hostels. Construída com React e Chakra UI, oferece uma interface moderna, responsiva e intuitiva para a administração do dia a dia. Através de um painel central, os administradores acompanham indicadores importantes, gerenciam quartos e hóspedes, e visualizam dados como receita mensal e taxa de ocupação por meio de gráficos.
+Hostely é uma plataforma web para gestão de hostels, pensada para atender de uma única unidade a redes com vários hostels. Construída com React e Chakra UI, oferece uma interface moderna, responsiva e intuitiva para a administração do dia a dia. Através de um painel central, os administradores acompanham indicadores, gerenciam quartos e hóspedes, cadastram dados do hostel, armários e aluguéis de itens.
 
-O projeto conta com uma landing page de apresentação, login com "manter conectado", auto-cadastro de hóspedes por link, navegação por menu lateral retrátil, internacionalização (português/inglês), suporte a tema claro/escuro e notificações (toasts) para dar feedback das ações realizadas.
+O projeto conta com landing page, login com "manter conectado", auto-cadastro de hóspedes por link, menu lateral retrátil, internacionalização (português/inglês), tema claro/escuro e toasts de feedback. **Não há pagamento pelo sistema** — o foco é cadastrar e monitorar clientes; cobranças ficam na maquininha do hostel.
 
-> **Observação:** atualmente os dados exibidos são mockados (definidos diretamente no código), servindo como base para a interface. Não há integração com back-end/API neste momento.
+> **Observação:** os dados são simulados via `localStorage` (sem back-end/API). Login e auto-cadastro por link são mockados para demonstração.
 
 ## Tecnologias Utilizadas
 
@@ -33,53 +33,61 @@ O projeto conta com uma landing page de apresentação, login com "manter conect
 - Página inicial (landing) apresentando a plataforma, recursos e planos
 - Cabeçalho transparente com efeito de blur ao rolar a página
 - Login com credenciais mockadas e opção "manter conectado"
-- Rotas administrativas protegidas por autenticação (redirecionam para o login)
+- Rotas administrativas protegidas por autenticação
 - Credenciais de demonstração: `admin@hostely.com` / `hostel123`
 
 ### Dashboard
 - Cards de indicadores: vendas mensais, taxa de ocupação e avaliação dos clientes
-- Lista de usuários recentes com ação de verificar pagamento
+- Lista de usuários recentes
 - Gráfico de linha com a visão geral da receita mensal
 - Lista de reservas pendentes com paginação
 - Área de calendário (placeholder)
 
+### Hostel
+- Cadastro e edição dos dados da unidade (nome, contato, endereço, descrição)
+- Regras do hostel editáveis
+- Armários opcionais: adicionar, remover e associar a um hóspede hospedado
+- Nome do hostel exibido no menu lateral (atualiza ao salvar)
+
 ### Clientes
-- Listagem de clientes em tabela, ordenada por cadastro mais recente, com paginação
+- Listagem em tabela, ordenada por cadastro mais recente, com paginação
 - Colunas de país e data de cadastro; foto ao lado do nome
-- Detalhes do cliente ao clicar (inclui idioma e origem do cadastro)
-- Cadastro no balcão via modal (foto por upload/câmera, nome, e-mail, telefone, quarto, CPF opcional, documento/ID, país e idioma principal)
-- Auto-cadastro por link: geração de link que abre uma tela pública de cadastro do próprio hóspede
-- Origem do cadastro identificada como "Atendimento (balcão)" ou "Auto-cadastro (link)"
-- Imagem de perfil padrão automática quando a foto falha ao carregar
+- Detalhes ao clicar (idioma, origem do cadastro e armário, se houver)
+- Cadastro no balcão via modal (foto, dados pessoais, quarto, armário opcional, CPF/ID, país e idioma)
+- Auto-cadastro por link enviado ao hóspede
+- Origem: "Atendimento (balcão)" ou "Auto-cadastro (link)"
 
 ### Quartos
-- Listagem de quartos em tabela
-- Busca de quartos por nome
-- Cadastro de novos quartos via modal (nome, capacidade, clientes, vagas disponíveis e tipo)
-- Tipos de quarto: Masculino, Feminino e Misto
+- Listagem e busca de quartos
+- Cadastro via modal (nome, capacidade, clientes, vagas e tipo)
+- Tipos: Masculino, Feminino e Misto
+
+### Aluguéis
+- Registro de itens alugados: toalha, adaptador, cadeado, bicicleta, canga e prancha
+- Associação ao hóspede e valor de cada aluguel
+- Listagem com busca e remoção
 
 ### Geral
-- Menu lateral retrátil (expandir/recolher) com o hostel selecionado em destaque
+- Menu lateral retrátil com hostel selecionado em destaque
 - Internacionalização: português (padrão) e inglês
-- Alternância entre tema claro e escuro (escuro como padrão)
-- Notificações (toasts) de sucesso, erro, aviso e informação
-- Cabeçalho com título dinâmico da página, notificações e menu de perfil (configurações e sair)
-
-> **Observação:** por enquanto os dados são simulados via `localStorage` (sem back-end/API). O login e o auto-cadastro por link são mockados para demonstração.
+- Tema claro/escuro (escuro como padrão)
+- Toasts de sucesso, erro, aviso e informação
+- Cabeçalho com título dinâmico, notificações e menu de perfil
+- SEO básico: título/descrição por rota e meta tags Open Graph
 
 ## Estrutura do Projeto
 
 ```
 src/
-├── components/       # Componentes reutilizáveis (Header, Sidebar, RequireAuth, etc.)
-├── contexts/         # Contextos de React (autenticação, idioma)
-├── data/             # Camada de dados simulada em localStorage (store)
-├── i18n/             # Dicionário de traduções (pt/en)
-├── pages/            # Páginas (Landing, Login, Dashboard, Clients, Rooms, SelfRegister)
-├── services/         # Serviços auxiliares (ToastService)
-├── theme.js          # Tema do Chakra UI (marca, modo escuro padrão)
-├── App.js            # Layout principal, menu lateral e rotas
-└── index.js          # Ponto de entrada da aplicação
+├── components/       # Header, Sidebar, BrandLogo, RequireAuth, DocumentTitle, etc.
+├── contexts/         # Autenticação e idioma
+├── data/             # Store em localStorage (clientes, quartos, hostel, armários, aluguéis)
+├── i18n/             # Traduções pt/en
+├── pages/            # Landing, Login, Dashboard, Hostel, Clients, Rooms, Rentals, SelfRegister
+├── services/         # ToastService
+├── theme.js          # Tema Chakra UI
+├── App.js            # Layout e rotas
+└── index.js          # Entrada da aplicação
 ```
 
 ## Como Executar o Projeto
@@ -88,7 +96,7 @@ Pré-requisitos: [Node.js](https://nodejs.org/) instalado.
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/hostel-system.git
+   git clone https://github.com/ramou1/hostel-system.git
    cd hostel-system
    ```
 
@@ -97,16 +105,16 @@ Pré-requisitos: [Node.js](https://nodejs.org/) instalado.
    npm install
    ```
 
-3. Inicie a aplicação em modo de desenvolvimento:
+3. Inicie em modo de desenvolvimento:
    ```bash
    npm start
    ```
 
-   A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
+   A aplicação estará em [http://localhost:3000](http://localhost:3000).
 
 ## Scripts Disponíveis
 
-- `npm start` — executa a aplicação em modo de desenvolvimento
-- `npm run build` — gera a versão de produção na pasta `build`
-- `npm test` — executa os testes
-- `npm run eject` — expõe as configurações do Create React App (irreversível)
+- `npm start` — modo de desenvolvimento
+- `npm run build` — build de produção na pasta `build`
+- `npm test` — testes
+- `npm run eject` — expõe as configs do CRA (irreversível)
