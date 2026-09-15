@@ -6,7 +6,6 @@ import {
   Heading,
   Text,
   Button,
-  Image,
   Icon,
   Badge,
   SimpleGrid,
@@ -35,19 +34,12 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
+import BrandLogo from "../components/BrandLogo";
 
 const FEATURE_ICONS = [FiHome, FiUsers, FiBarChart2, FiGlobe];
 
 function Brand() {
-  const color = useColorModeValue("gray.800", "white");
-  return (
-    <Flex align="center" gap={2}>
-      <Image src="/images/logo-collapsed.png" alt="Hostely" boxSize="34px" objectFit="contain" />
-      <Text fontSize="lg" fontWeight={800} color={color} letterSpacing="-0.02em">
-        Hostel<Box as="span" color="brand.500">y</Box>
-      </Text>
-    </Flex>
-  );
+  return <BrandLogo height="30px" />;
 }
 
 function Landing() {
@@ -71,9 +63,13 @@ function Landing() {
   );
   const muted = useColorModeValue("gray.600", "gray.400");
   const sectionBg = useColorModeValue("gray.50", "gray.800");
-  const navBorder = useColorModeValue("gray.100", "gray.700");
+  const footerBorder = useColorModeValue("gray.100", "gray.700");
   const cardBorder = useColorModeValue("gray.100", "gray.700");
-  const navBg = useColorModeValue("whiteAlpha.800", "blackAlpha.600");
+  // Fundo do header ao rolar: cinza neutro (sem tom azulado do gray.900 do Chakra)
+  const navBg = useColorModeValue(
+    "rgba(255, 255, 255, 0.82)",
+    "rgba(36, 36, 38, 0.78)"
+  );
 
   const features = t("landing.features.items");
   const plans = t("landing.pricing.plans");
@@ -92,10 +88,10 @@ function Landing() {
         right={0}
         zIndex={10}
         bg={scrolled ? navBg : "transparent"}
-        backdropFilter={scrolled ? "blur(10px)" : "none"}
-        borderBottom="1px solid"
-        borderColor={scrolled ? navBorder : "transparent"}
-        transition="background-color 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease"
+        backdropFilter={scrolled ? "blur(12px)" : "none"}
+        border="none"
+        boxShadow="none"
+        transition="background-color 0.25s ease, backdrop-filter 0.25s ease"
       >
         <Container maxW="6xl">
           <Flex align="center" justify="space-between" h="64px">
@@ -292,7 +288,7 @@ function Landing() {
       </Box>
 
       {/* Footer */}
-      <Box borderTop="1px solid" borderColor={navBorder}>
+      <Box borderTop="1px solid" borderColor={footerBorder}>
         <Container maxW="6xl" py={8}>
           <Flex
             align="center"

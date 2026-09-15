@@ -64,7 +64,7 @@ function SettingsModal({ isOpen, onClose, profile, onSave }) {
     setDraft((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleSave = () => {
-    onSave?.(draft);
+    onSave?.({ ...draft, emailNotifications: false });
     onClose();
   };
 
@@ -160,16 +160,19 @@ function SettingsModal({ isOpen, onClose, profile, onSave }) {
             {t("settings.account")}
           </Text>
           <FormControl display="flex" alignItems="center" justifyContent="space-between">
-            <FormLabel htmlFor="email-notifications" mb={0} fontSize="sm">
-              {t("settings.notifications")}
-            </FormLabel>
+            <Box>
+              <FormLabel htmlFor="email-notifications" mb={0} fontSize="sm">
+                {t("settings.notifications")}
+              </FormLabel>
+              <Text fontSize="xs" color={sectionColor} mt={1}>
+                {t("settings.notificationsDisabled")}
+              </Text>
+            </Box>
             <Switch
               id="email-notifications"
               colorScheme="brand"
-              isChecked={!!draft?.emailNotifications}
-              onChange={(e) =>
-                setDraft((prev) => ({ ...prev, emailNotifications: e.target.checked }))
-              }
+              isChecked={false}
+              isDisabled
             />
           </FormControl>
         </ModalBody>

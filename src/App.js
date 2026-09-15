@@ -13,7 +13,6 @@ import { Route, Routes, Outlet } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Rooms from "./pages/Rooms";
-import Messages from "./pages/Messages";
 import SelfRegister from "./pages/SelfRegister";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -28,7 +27,7 @@ const DEFAULT_PROFILE = {
   name: "Admin Pé na Areia",
   email: "admin@hostely.com",
   photo: "",
-  emailNotifications: true,
+  emailNotifications: false,
 };
 
 // Nomes antigos que devem ser migrados para o nome padrão atual
@@ -42,6 +41,7 @@ function loadProfile() {
     if (LEGACY_NAMES.includes(merged.name)) {
       merged.name = DEFAULT_PROFILE.name;
     }
+    merged.emailNotifications = false;
     return merged;
   } catch {
     return DEFAULT_PROFILE;
@@ -149,7 +149,6 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="clients" element={<Clients />} />
         <Route path="rooms" element={<Rooms />} />
-        <Route path="messages" element={<Messages />} />
       </Route>
     </Routes>
   );

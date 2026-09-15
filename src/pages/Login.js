@@ -14,7 +14,6 @@ import {
   IconButton,
   Button,
   Checkbox,
-  Image,
   Alert,
   AlertIcon,
   Link as ChakraLink,
@@ -24,6 +23,7 @@ import { FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi";
 import { Link as RouterLink, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
 import { useAuth, DEMO_CREDENTIALS } from "../contexts/AuthContext";
+import BrandLogo from "../components/BrandLogo";
 
 function Login() {
   const { t } = useI18n();
@@ -60,16 +60,7 @@ function Login() {
     <Flex minH="100vh" bg={pageBg} align="center" justify="center" p={4}>
       <Box w="100%" maxW="420px">
         <Flex direction="column" align="center" mb={6}>
-          <Image
-            src="/images/logo-collapsed.png"
-            alt="Hostely"
-            boxSize="52px"
-            objectFit="contain"
-            mb={2}
-          />
-          <Text fontSize="xl" fontWeight={800} letterSpacing="-0.02em">
-            Hostel<Box as="span" color="brand.500">y</Box>
-          </Text>
+          <BrandLogo height="48px" />
         </Flex>
 
         <Card>

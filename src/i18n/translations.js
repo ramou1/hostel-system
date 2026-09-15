@@ -25,7 +25,6 @@ export const translations = {
       dashboard: "Painel",
       clients: "Clientes",
       rooms: "Quartos",
-      messages: "Mensagens",
     },
     dashboard: {
       monthlySales: "Vendas mensais",
@@ -118,15 +117,6 @@ export const translations = {
     },
     header: {
       openMenu: "Abrir menu",
-      messages: {
-        title: "Mensagens",
-        seeAll: "Ver todas as mensagens",
-        items: [
-          { name: "Ana Souza", text: "Oi! Meu check-in pode ser mais cedo?", time: "há 5 min" },
-          { name: "Bruno Lima", text: "Obrigado pela ótima estadia!", time: "há 1 h" },
-          { name: "Carla Dias", text: "Vocês têm quarto para 3 pessoas?", time: "há 3 h" },
-        ],
-      },
       notifications: {
         title: "Notificações",
         items: [
@@ -157,13 +147,7 @@ export const translations = {
       english: "Inglês",
       account: "Conta",
       notifications: "Notificações por e-mail",
-    },
-    messagesPage: {
-      title: "Mensagens",
-      subtitle: "Central de conversas com seus hóspedes",
-      comingSoon: "A página completa de chat está a caminho.",
-      placeholder:
-        "Em breve você poderá conversar com os hóspedes diretamente por aqui.",
+      notificationsDisabled: "Indisponível no momento",
     },
     selfRegister: {
       title: "Cadastro de hóspede",
@@ -286,7 +270,6 @@ export const translations = {
       dashboard: "Dashboard",
       clients: "Clients",
       rooms: "Rooms",
-      messages: "Messages",
     },
     dashboard: {
       monthlySales: "Monthly sales",
@@ -379,15 +362,6 @@ export const translations = {
     },
     header: {
       openMenu: "Open menu",
-      messages: {
-        title: "Messages",
-        seeAll: "See all messages",
-        items: [
-          { name: "Ana Souza", text: "Hi! Can I check in earlier?", time: "5 min ago" },
-          { name: "Bruno Lima", text: "Thanks for the great stay!", time: "1 h ago" },
-          { name: "Carla Dias", text: "Do you have a room for 3 people?", time: "3 h ago" },
-        ],
-      },
       notifications: {
         title: "Notifications",
         items: [
@@ -418,13 +392,7 @@ export const translations = {
       english: "English",
       account: "Account",
       notifications: "Email notifications",
-    },
-    messagesPage: {
-      title: "Messages",
-      subtitle: "Chat hub with your guests",
-      comingSoon: "The full chat page is on its way.",
-      placeholder:
-        "Soon you'll be able to chat with guests directly from here.",
+      notificationsDisabled: "Unavailable at the moment",
     },
     selfRegister: {
       title: "Guest registration",

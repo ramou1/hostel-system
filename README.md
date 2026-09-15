@@ -63,7 +63,7 @@ O projeto conta com uma landing page de apresentação, login com "manter conect
 - Internacionalização: português (padrão) e inglês
 - Alternância entre tema claro e escuro (escuro como padrão)
 - Notificações (toasts) de sucesso, erro, aviso e informação
-- Cabeçalho com título dinâmico da página, ícones de mensagens/notificações e menu de perfil (configurações e sair)
+- Cabeçalho com título dinâmico da página, notificações e menu de perfil (configurações e sair)
 
 > **Observação:** por enquanto os dados são simulados via `localStorage` (sem back-end/API). O login e o auto-cadastro por link são mockados para demonstração.
 

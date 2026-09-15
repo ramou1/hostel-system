@@ -11,8 +11,9 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import { FiHome, FiUsers, FiKey, FiMessageSquare } from "react-icons/fi";
+import { FiHome, FiUsers, FiKey } from "react-icons/fi";
 import { useI18n } from "../contexts/LanguageContext";
+import BrandLogo from "./BrandLogo";
 
 function NavItem({ to, icon, label, collapsed, end, onNavigate }) {
   const activeBg = useColorModeValue("brand.500", "brand.500");
@@ -78,7 +79,6 @@ function Sidebar({ collapsed = false, onNavigate }) {
     { to: "/app", icon: FiHome, label: t("nav.dashboard"), end: true },
     { to: "/app/clients", icon: FiUsers, label: t("nav.clients") },
     { to: "/app/rooms", icon: FiKey, label: t("nav.rooms") },
-    { to: "/app/messages", icon: FiMessageSquare, label: t("nav.messages") },
   ];
 
   return (
@@ -95,26 +95,19 @@ function Sidebar({ collapsed = false, onNavigate }) {
       <Flex
         align="center"
         justify={collapsed ? "center" : "flex-start"}
-        gap={3}
         px={collapsed ? 0 : 2}
         mb={8}
         minH="44px"
       >
-        <Image
-          src="/images/logo-collapsed.png"
-          alt="Hostely"
-          boxSize="36px"
-          objectFit="contain"
-        />
-        {!collapsed && (
-          <Text
-            fontSize="xl"
-            fontWeight={800}
-            color={brandText}
-            letterSpacing="-0.02em"
-          >
-            Hostel<Box as="span" color="brand.500">y</Box>
-          </Text>
+        {collapsed ? (
+          <Image
+            src="/images/logo-collapsed.png"
+            alt="Hostely"
+            boxSize="36px"
+            objectFit="contain"
+          />
+        ) : (
+          <BrandLogo height="34px" />
         )}
       </Flex>
 
