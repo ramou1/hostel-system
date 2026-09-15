@@ -4,9 +4,9 @@
 
 ![Login Hostely](https://i.imgur.com/6yPDf4o.png)
 
-![Configurações Hostely](https://i.imgur.com/eUqdH0H.png)
+![Configurações Hostely](https://i.imgur.com/F0uJI2o.png)
 
-![Painel Hostely](https://i.imgur.com/bRye2j8.png)
+![Painel Hostely](https://i.imgur.com/Pys8Utq.png)
 
 ## Descrição
 
