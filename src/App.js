@@ -19,6 +19,7 @@ import Login from "./pages/Login";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import RequireAuth from "./components/RequireAuth";
+import DocumentTitle from "./components/DocumentTitle";
 import "./App.css";
 
 const PROFILE_KEY = "hostelzim:profile";
@@ -131,26 +132,29 @@ function AppShell() {
 
 function App() {
   return (
-    <Routes>
-      {/* Páginas públicas */}
-      <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/cadastro/:token" element={<SelfRegister />} />
+    <>
+      <DocumentTitle />
+      <Routes>
+        {/* Páginas públicas */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro/:token" element={<SelfRegister />} />
 
-      {/* Área administrativa (protegida por login) */}
-      <Route
-        path="/app"
-        element={
-          <RequireAuth>
-            <AppShell />
-          </RequireAuth>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="clients" element={<Clients />} />
-        <Route path="rooms" element={<Rooms />} />
-      </Route>
-    </Routes>
+        {/* Área administrativa (protegida por login) */}
+        <Route
+          path="/app"
+          element={
+            <RequireAuth>
+              <AppShell />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="rooms" element={<Rooms />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 

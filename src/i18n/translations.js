@@ -21,6 +21,19 @@ export const translations = {
       copied: "Copiado!",
       open: "Abrir",
     },
+    seo: {
+      defaultTitle: "Hostely | Plataforma de gerenciamento de hostels",
+      defaultDescription:
+        "Hostely é a plataforma para gerenciar quartos, hóspedes e reservas de um ou vários hostels.",
+      homeTitle: "Hostely | Plataforma de gerenciamento de hostels",
+      homeDescription:
+        "Gerencie quartos, hóspedes e reservas de um ou vários hostels em um só lugar. Auto-cadastro por link, painel de ocupação e suporte a português e inglês.",
+      loginTitle: "Entrar | Hostely",
+      dashboardTitle: "Painel | Hostely",
+      clientsTitle: "Clientes | Hostely",
+      roomsTitle: "Quartos | Hostely",
+      registerTitle: "Cadastro de hóspede | Hostely",
+    },
     nav: {
       dashboard: "Painel",
       clients: "Clientes",
@@ -265,6 +278,19 @@ export const translations = {
       copy: "Copy",
       copied: "Copied!",
       open: "Open",
+    },
+    seo: {
+      defaultTitle: "Hostely | Hostel management platform",
+      defaultDescription:
+        "Hostely is the platform to manage rooms, guests and bookings for one or many hostels.",
+      homeTitle: "Hostely | Hostel management platform",
+      homeDescription:
+        "Manage rooms, guests and bookings for one or many hostels in a single place. Guest self-registration by link, occupancy dashboard, and Portuguese/English support.",
+      loginTitle: "Sign in | Hostely",
+      dashboardTitle: "Dashboard | Hostely",
+      clientsTitle: "Clients | Hostely",
+      roomsTitle: "Rooms | Hostely",
+      registerTitle: "Guest registration | Hostely",
     },
     nav: {
       dashboard: "Dashboard",
