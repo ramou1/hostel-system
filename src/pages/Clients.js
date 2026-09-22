@@ -24,9 +24,7 @@ import {
   CardBody,
   Avatar,
   Text,
-  Box,
   Badge,
-  SimpleGrid,
   Divider,
   HStack,
   IconButton,
@@ -51,13 +49,12 @@ import { useSearchParams } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
 import useToastService from "../services/ToastService";
 import ClientFormFields from "../components/ClientFormFields";
+import ClientDetailsModal from "../components/ClientDetailsModal";
 import {
   loadClients,
   loadRooms,
   addClient,
   checkoutClient,
-  getClientLanguages,
-  getClientLocker,
   getOpenRentalsForClient,
   SOURCE,
   STORAGE_KEYS,
@@ -94,20 +91,6 @@ function SourceBadge({ source, t }) {
       <Icon as={isLink ? FiLink : FiUserCheck} boxSize={3} />
       {t(isLink ? "clients.sourceLink" : "clients.sourceDesk")}
     </Badge>
-  );
-}
-
-function InfoField({ label, children }) {
-  const labelColor = useColorModeValue("gray.500", "gray.400");
-  return (
-    <Box>
-      <Text fontSize="xs" fontWeight={700} color={labelColor} textTransform="uppercase">
-        {label}
-      </Text>
-      <Box fontSize="sm" mt={0.5}>
-        {children}
-      </Box>
-    </Box>
   );
 }
 
@@ -163,12 +146,6 @@ function Clients() {
       year: "numeric",
       ...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
     }).format(new Date(iso));
-  };
-
-  const languageLabels = (client) => {
-    const codes = getClientLanguages(client);
-    if (!codes.length) return "—";
-    return codes.map((code) => t(`clients.languages.${code}`)).join(", ");
   };
 
   const sortedClients = useMemo(() => {
@@ -414,98 +391,24 @@ function Clients() {
         </CardBody>
       </Card>
 
-      {/* Detalhes */}
-      <Modal
+      <ClientDetailsModal
         isOpen={detailsModal.isOpen}
         onClose={detailsModal.onClose}
-        isCentered
-        size="lg"
-      >
-        <ModalOverlay backdropFilter="blur(4px)" />
-        <ModalContent borderRadius="16px">
-          <ModalHeader>{t("clients.detailsTitle")}</ModalHeader>
-          <ModalCloseButton />
-          {selectedClient && (
-            <ModalBody pb={6}>
-              <Flex align="center" gap={4} mb={5}>
-                <Avatar
-                  size="lg"
-                  name={selectedClient.name}
-                  src={selectedClient.photo || undefined}
-                />
-                <Box minW={0}>
-                  <Text fontSize="lg" fontWeight={700} noOfLines={1}>
-                    {selectedClient.name}
-                  </Text>
-                  <Text fontSize="sm" color="gray.500" noOfLines={1}>
-                    {selectedClient.email || "—"}
-                  </Text>
-                  <HStack mt={2} spacing={2}>
-                    <SourceBadge source={selectedClient.source} t={t} />
-                    <Badge
-                      colorScheme={
-                        selectedClient.status === "checkedOut" ? "gray" : "green"
-                      }
-                      borderRadius="full"
-                      textTransform="none"
-                    >
-                      {selectedClient.status === "checkedOut"
-                        ? t("clients.statusCheckedOut")
-                        : t("clients.statusCheckedIn")}
-                    </Badge>
-                  </HStack>
-                </Box>
-              </Flex>
-
-              <Divider mb={5} />
-
-              <SimpleGrid columns={{ base: 1, sm: 2 }} spacingY={4} spacingX={6}>
-                <InfoField label={t("clients.phone")}>
-                  {selectedClient.phone || "—"}
-                </InfoField>
-                <InfoField label={t("clients.room")}>
-                  {selectedClient.room || "—"}
-                </InfoField>
-                <InfoField label={t("clients.locker")}>
-                  {getClientLocker(selectedClient) || "—"}
-                </InfoField>
-                <InfoField label={t("clients.cpf")}>
-                  {selectedClient.cpf || "—"}
-                </InfoField>
-                <InfoField label={t("clients.documentId")}>
-                  {selectedClient.documentId || "—"}
-                </InfoField>
-                <InfoField label={t("clients.country")}>
-                  {selectedClient.country || "—"}
-                </InfoField>
-                <InfoField label={t("clients.languageMain")}>
-                  {languageLabels(selectedClient)}
-                </InfoField>
-                <InfoField label={t("clients.registeredAt")}>
-                  {formatDate(selectedClient.registeredAt, true)}
-                </InfoField>
-                {selectedClient.checkedOutAt && (
-                  <InfoField label={t("clients.checkedOutAt")}>
-                    {formatDate(selectedClient.checkedOutAt, true)}
-                  </InfoField>
-                )}
-              </SimpleGrid>
-
-              {selectedClient.status !== "checkedOut" && (
-                <Button
-                  mt={6}
-                  w="100%"
-                  colorScheme="orange"
-                  leftIcon={<FiLogOut />}
-                  onClick={openCheckout}
-                >
-                  {t("clients.checkout")}
-                </Button>
-              )}
-            </ModalBody>
-          )}
-        </ModalContent>
-      </Modal>
+        client={selectedClient}
+        footer={
+          selectedClient?.status !== "checkedOut" ? (
+            <Button
+              mt={6}
+              w="100%"
+              colorScheme="orange"
+              leftIcon={<FiLogOut />}
+              onClick={openCheckout}
+            >
+              {t("clients.checkout")}
+            </Button>
+          ) : null
+        }
+      />
 
       {/* Checkout */}
       <Modal

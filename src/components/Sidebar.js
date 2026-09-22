@@ -11,7 +11,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import { FiHome, FiUsers, FiKey, FiMapPin, FiShoppingBag } from "react-icons/fi";
+import { FiHome, FiUsers, FiKey, FiShoppingBag } from "react-icons/fi";
 import { useI18n } from "../contexts/LanguageContext";
 import BrandLogo from "./BrandLogo";
 import { loadHostel } from "../data/store";
@@ -91,10 +91,9 @@ function Sidebar({ collapsed = false, onNavigate }) {
 
   const items = [
     { to: "/app", icon: FiHome, label: t("nav.dashboard"), end: true },
-    { to: "/app/hostel", icon: FiMapPin, label: t("nav.hostel") },
     { to: "/app/clients", icon: FiUsers, label: t("nav.clients") },
-    { to: "/app/rooms", icon: FiKey, label: t("nav.rooms") },
     { to: "/app/rentals", icon: FiShoppingBag, label: t("nav.rentals") },
+    { to: "/app/rooms", icon: FiKey, label: t("nav.rooms") },
   ];
 
   return (
@@ -107,13 +106,18 @@ function Sidebar({ collapsed = false, onNavigate }) {
       py={5}
       px={collapsed ? 2 : 4}
     >
-      {/* Marca */}
+      {/* Marca → painel */}
       <Flex
+        as={NavLink}
+        to="/app"
+        end
+        onClick={onNavigate}
         align="center"
         justify={collapsed ? "center" : "flex-start"}
         px={collapsed ? 0 : 2}
         mb={8}
         minH="44px"
+        _hover={{ textDecoration: "none", opacity: 0.85 }}
       >
         {collapsed ? (
           <Image
@@ -127,7 +131,7 @@ function Sidebar({ collapsed = false, onNavigate }) {
         )}
       </Flex>
 
-      {/* Hostel selecionado */}
+      {/* Hostel selecionado (único acesso à página Hostel) */}
       {collapsed ? (
         <Tooltip label={currentHostel} placement="right" hasArrow openDelay={200}>
           <Flex
@@ -172,7 +176,6 @@ function Sidebar({ collapsed = false, onNavigate }) {
         </Flex>
       )}
 
-      {/* Navegação */}
       <VStack spacing={1} align="stretch" flex="1">
         {items.map((item) => (
           <NavItem
@@ -184,7 +187,6 @@ function Sidebar({ collapsed = false, onNavigate }) {
         ))}
       </VStack>
 
-      {/* Rodapé */}
       {!collapsed && (
         <Text fontSize="xs" color="gray.500" px={2} pt={4}>
           © {new Date().getFullYear()} Hostely

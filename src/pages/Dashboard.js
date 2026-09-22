@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Card,
   CardBody,
@@ -17,6 +17,7 @@ import {
   GridItem,
   HStack,
   Icon,
+  useDisclosure,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { Line } from "react-chartjs-2";
@@ -41,7 +42,20 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import {
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  startOfDay,
+  endOfDay,
+} from "date-fns";
+import { ptBR, enUS } from "date-fns/locale";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useI18n } from "../contexts/LanguageContext";
+import ClientDetailsModal from "../components/ClientDetailsModal";
+import { loadClients, loadRentals } from "../data/store";
 
 ChartJS.register(
   CategoryScale,
@@ -53,6 +67,8 @@ ChartJS.register(
   Legend,
   Filler
 );
+
+const locales = { pt: ptBR, en: enUS };
 
 function StatCard({ icon, iconBg, label, children, topRight }) {
   return (
@@ -85,12 +101,61 @@ function StatCard({ icon, iconBg, label, children, topRight }) {
 }
 
 function Dashboard() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [showSales, setShowSales] = useState(false);
+  const [clients, setClients] = useState(loadClients);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const detailsModal = useDisclosure();
 
   const axisColor = useColorModeValue("#4A5568", "#A0AEC0");
   const gridColor = useColorModeValue("rgba(0,0,0,0.06)", "rgba(255,255,255,0.08)");
   const mutedText = useColorModeValue("gray.500", "gray.400");
+  const calendarBg = useColorModeValue("white", "gray.800");
+
+  const localizer = useMemo(
+    () =>
+      dateFnsLocalizer({
+        format,
+        parse,
+        startOfWeek: () => startOfWeek(new Date(), { locale: locales[lang] || enUS }),
+        getDay,
+        locales,
+      }),
+    [lang]
+  );
+
+  const recentClients = useMemo(
+    () =>
+      [...clients]
+        .sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt))
+        .slice(0, 5),
+    [clients]
+  );
+
+  const calendarEvents = useMemo(() => {
+    const checkIns = clients
+      .filter((c) => c.registeredAt)
+      .map((c) => ({
+        id: `checkin-${c.email || c.name}`,
+        title: c.name,
+        start: startOfDay(new Date(c.registeredAt)),
+        end: endOfDay(new Date(c.registeredAt)),
+        allDay: true,
+        resource: c,
+      }));
+
+    const rentals = loadRentals()
+      .filter((r) => r.rentedAt)
+      .map((r) => ({
+        id: `rental-${r.id}`,
+        title: `${r.clientName} · ${t(`rentals.items.${r.itemType}`)}`,
+        start: startOfDay(new Date(r.rentedAt)),
+        end: endOfDay(new Date(r.rentedAt)),
+        allDay: true,
+      }));
+
+    return [...checkIns, ...rentals];
+  }, [clients, t]);
 
   const data = {
     labels: t("dashboard.months"),
@@ -120,12 +185,6 @@ function Dashboard() {
     },
   };
 
-  const users = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Alice Johnson" },
-  ];
-
   const bookings = [
     { id: 1, name: "John Doe", date: "2024-09-01" },
     { id: 2, name: "Jane Smith", date: "2024-09-02" },
@@ -144,9 +203,31 @@ function Dashboard() {
     currentPage * bookingsPerPage
   );
 
+  const refreshClients = () => setClients(loadClients());
+
+  const openClient = (client) => {
+    setSelectedClient(client);
+    detailsModal.onOpen();
+  };
+
+  const messages = {
+    today: lang === "pt" ? "Hoje" : "Today",
+    previous: lang === "pt" ? "Anterior" : "Back",
+    next: lang === "pt" ? "Próximo" : "Next",
+    month: lang === "pt" ? "Mês" : "Month",
+    week: lang === "pt" ? "Semana" : "Week",
+    day: lang === "pt" ? "Dia" : "Day",
+    agenda: lang === "pt" ? "Agenda" : "Agenda",
+    date: lang === "pt" ? "Data" : "Date",
+    time: lang === "pt" ? "Hora" : "Time",
+    event: lang === "pt" ? "Evento" : "Event",
+    noEventsInRange:
+      lang === "pt" ? "Nenhum evento neste período." : "No events in this range.",
+    showMore: (total) => (lang === "pt" ? `+${total} mais` : `+${total} more`),
+  };
+
   return (
     <Stack spacing={6}>
-      {/* Links rápidos */}
       <HStack spacing={3} flexWrap="wrap">
         <Button
           as={RouterLink}
@@ -227,12 +308,57 @@ function Dashboard() {
         </StatCard>
       </SimpleGrid>
 
-      <Grid templateColumns={{ base: "1fr", lg: "3fr 2fr" }} gap={6}>
+      <Card>
+        <CardBody>
+          <Heading fontSize="md" mb={4}>
+            {t("dashboard.calendar")}
+          </Heading>
+          <Box
+            h={{ base: "360px", md: "480px" }}
+            bg={calendarBg}
+            className="dashboard-calendar"
+            sx={{
+              ".rbc-calendar": { fontSize: "13px" },
+              ".rbc-toolbar": { flexWrap: "wrap", gap: "4px", mb: 2 },
+              ".rbc-toolbar button": {
+                borderRadius: "8px",
+                fontSize: "12px",
+                padding: "4px 8px",
+              },
+              ".rbc-event": {
+                backgroundColor: "#f59e0b",
+                border: "none",
+                borderRadius: "6px",
+              },
+              ".rbc-today": { backgroundColor: "rgba(245, 158, 11, 0.08)" },
+              ".rbc-off-range-bg": { background: "transparent" },
+            }}
+          >
+            <Calendar
+              localizer={localizer}
+              events={calendarEvents}
+              startAccessor="start"
+              endAccessor="end"
+              culture={lang === "pt" ? "pt" : "en"}
+              messages={messages}
+              views={["month"]}
+              defaultView="month"
+              style={{ height: "100%" }}
+              popup
+              onSelectEvent={(event) => {
+                if (event.resource) openClient(event.resource);
+              }}
+            />
+          </Box>
+        </CardBody>
+      </Card>
+
+      <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={6}>
         <GridItem>
           <Card h="100%">
             <CardBody>
               <Flex justify="space-between" align="center" mb={4}>
-                <Heading fontSize="md">{t("dashboard.recentUsers")}</Heading>
+                <Heading fontSize="md">{t("dashboard.recentClients")}</Heading>
                 <IconButton
                   aria-label="refresh"
                   icon={<MdRefresh size={20} />}
@@ -240,62 +366,43 @@ function Dashboard() {
                   variant="ghost"
                   colorScheme="brand"
                   borderRadius="full"
+                  onClick={refreshClients}
                 />
               </Flex>
               <Stack spacing={3}>
-                {users.map((user) => (
-                  <Flex key={user.id} align="center" gap={3}>
-                    <Avatar name={user.name} size="sm" />
-                    <Text fontSize="sm" fontWeight={500}>
-                      {user.name}
-                    </Text>
-                    <Spacer />
-                    <IconButton
-                      aria-label={t("common.view")}
-                      icon={<FiEye />}
-                      size="sm"
-                      colorScheme="brand"
-                      variant="ghost"
-                    />
-                  </Flex>
-                ))}
+                {recentClients.length === 0 ? (
+                  <Text fontSize="sm" color={mutedText}>
+                    {t("common.empty")}
+                  </Text>
+                ) : (
+                  recentClients.map((client) => (
+                    <Flex key={client.email || client.name} align="center" gap={3}>
+                      <Avatar
+                        name={client.name}
+                        src={client.photo || undefined}
+                        size="sm"
+                      />
+                      <Box minW={0} flex="1">
+                        <Text fontSize="sm" fontWeight={500} noOfLines={1}>
+                          {client.name}
+                        </Text>
+                        <Text fontSize="xs" color={mutedText} noOfLines={1}>
+                          {client.room || "—"}
+                        </Text>
+                      </Box>
+                      <Spacer />
+                      <IconButton
+                        aria-label={t("common.view")}
+                        icon={<FiEye />}
+                        size="sm"
+                        colorScheme="brand"
+                        variant="ghost"
+                        onClick={() => openClient(client)}
+                      />
+                    </Flex>
+                  ))
+                )}
               </Stack>
-            </CardBody>
-          </Card>
-        </GridItem>
-
-        <GridItem>
-          <Card h="100%">
-            <CardBody>
-              <Heading fontSize="md" mb={4}>
-                {t("dashboard.calendar")}
-              </Heading>
-              <Flex
-                align="center"
-                justify="center"
-                h="calc(100% - 40px)"
-                minH="140px"
-                color={mutedText}
-                fontSize="sm"
-                textAlign="center"
-              >
-                {t("dashboard.calendarPlaceholder")}
-              </Flex>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </Grid>
-
-      <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
-        <GridItem>
-          <Card h="100%">
-            <CardBody>
-              <Heading fontSize="md" mb={4}>
-                {t("dashboard.revenueOverview")}
-              </Heading>
-              <Box h="300px">
-                <Line data={data} options={options} />
-              </Box>
             </CardBody>
           </Card>
         </GridItem>
@@ -349,6 +456,23 @@ function Dashboard() {
           </Card>
         </GridItem>
       </Grid>
+
+      <Card>
+        <CardBody>
+          <Heading fontSize="md" mb={4}>
+            {t("dashboard.revenueOverview")}
+          </Heading>
+          <Box h="300px">
+            <Line data={data} options={options} />
+          </Box>
+        </CardBody>
+      </Card>
+
+      <ClientDetailsModal
+        isOpen={detailsModal.isOpen}
+        onClose={detailsModal.onClose}
+        client={selectedClient}
+      />
     </Stack>
   );
 }
