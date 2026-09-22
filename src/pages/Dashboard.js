@@ -28,7 +28,8 @@ import {
   MdPieChart,
   MdStarRate,
 } from "react-icons/md";
-import { FiEye } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiUserPlus, FiShoppingBag } from "react-icons/fi";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -53,12 +54,11 @@ ChartJS.register(
   Filler
 );
 
-// Card de indicador reutilizável
-function StatCard({ icon, iconBg, label, children }) {
+function StatCard({ icon, iconBg, label, children, topRight }) {
   return (
     <Card>
       <CardBody>
-        <Flex align="center" gap={4}>
+        <Flex align="flex-start" gap={4}>
           <Flex
             align="center"
             justify="center"
@@ -70,9 +70,12 @@ function StatCard({ icon, iconBg, label, children }) {
             <Icon as={icon} boxSize={6} color="white" />
           </Flex>
           <Box minW={0} flex="1">
-            <Text fontSize="sm" color="gray.500" fontWeight={600} noOfLines={1}>
-              {label}
-            </Text>
+            <Flex align="center" justify="space-between" gap={2}>
+              <Text fontSize="sm" color="gray.500" fontWeight={600} noOfLines={1}>
+                {label}
+              </Text>
+              {topRight}
+            </Flex>
             {children}
           </Box>
         </Flex>
@@ -83,6 +86,7 @@ function StatCard({ icon, iconBg, label, children }) {
 
 function Dashboard() {
   const { t } = useI18n();
+  const [showSales, setShowSales] = useState(false);
 
   const axisColor = useColorModeValue("#4A5568", "#A0AEC0");
   const gridColor = useColorModeValue("rgba(0,0,0,0.06)", "rgba(255,255,255,0.08)");
@@ -142,15 +146,48 @@ function Dashboard() {
 
   return (
     <Stack spacing={6}>
-      {/* Indicadores */}
+      {/* Links rápidos */}
+      <HStack spacing={3} flexWrap="wrap">
+        <Button
+          as={RouterLink}
+          to="/app/clients?add=1"
+          colorScheme="brand"
+          leftIcon={<FiUserPlus />}
+        >
+          {t("dashboard.quickAddClient")}
+        </Button>
+        <Button
+          as={RouterLink}
+          to="/app/rentals?add=1"
+          variant="outline"
+          colorScheme="brand"
+          leftIcon={<FiShoppingBag />}
+        >
+          {t("dashboard.quickAddRental")}
+        </Button>
+      </HStack>
+
       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
         <StatCard
           icon={MdAttachMoney}
           iconBg="green.400"
           label={t("dashboard.monthlySales")}
+          topRight={
+            <IconButton
+              aria-label={
+                showSales
+                  ? t("dashboard.hideSales")
+                  : t("dashboard.showSales")
+              }
+              icon={showSales ? <FiEyeOff /> : <FiEye />}
+              size="sm"
+              variant="ghost"
+              onClick={() => setShowSales((v) => !v)}
+            />
+          }
         >
-          <Heading fontSize="2xl" color="green.400" mt={1}>
-            R$ 32.545
+          <Heading fontSize="2xl" color="green.400" mt={1} letterSpacing="wide">
+            {showSales ? "R$ 32.545" : "••••••"}
           </Heading>
         </StatCard>
 
@@ -190,7 +227,6 @@ function Dashboard() {
         </StatCard>
       </SimpleGrid>
 
-      {/* Usuários recentes + Calendário */}
       <Grid templateColumns={{ base: "1fr", lg: "3fr 2fr" }} gap={6}>
         <GridItem>
           <Card h="100%">
@@ -250,7 +286,6 @@ function Dashboard() {
         </GridItem>
       </Grid>
 
-      {/* Gráfico de receita + Reservas pendentes */}
       <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <GridItem>
           <Card h="100%">

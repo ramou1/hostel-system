@@ -31,6 +31,8 @@ import {
   HStack,
   IconButton,
   Icon,
+  Checkbox,
+  Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import {
@@ -43,16 +45,20 @@ import {
   FiChevronRight,
   FiCopy,
   FiExternalLink,
+  FiLogOut,
 } from "react-icons/fi";
+import { useSearchParams } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
 import useToastService from "../services/ToastService";
 import ClientFormFields from "../components/ClientFormFields";
 import {
   loadClients,
   loadRooms,
-  loadLockers,
   addClient,
-  assignLockerToClient,
+  checkoutClient,
+  getClientLanguages,
+  getClientLocker,
+  getOpenRentalsForClient,
   SOURCE,
   STORAGE_KEYS,
 } from "../data/store";
@@ -67,12 +73,11 @@ const EMPTY_CLIENT = {
   cpf: "",
   documentId: "",
   photo: "",
-  country: "BR",
-  language: "pt",
-  lockerId: "",
+  country: "",
+  languages: ["pt"],
+  locker: "",
 };
 
-// Badge que representa a origem do cadastro (link x balcão)
 function SourceBadge({ source, t }) {
   const isLink = source === SOURCE.LINK;
   return (
@@ -92,7 +97,6 @@ function SourceBadge({ source, t }) {
   );
 }
 
-// Linha rótulo/valor usada no modal de detalhes
 function InfoField({ label, children }) {
   const labelColor = useColorModeValue("gray.500", "gray.400");
   return (
@@ -110,33 +114,44 @@ function InfoField({ label, children }) {
 function Clients() {
   const { t, lang } = useI18n();
   const { showSuccess } = useToastService();
+  const [searchParams, setSearchParams] = useSearchParams();
   const addModal = useDisclosure();
   const detailsModal = useDisclosure();
   const linkModal = useDisclosure();
+  const checkoutModal = useDisclosure();
 
   const [clients, setClients] = useState(loadClients);
   const [rooms, setRooms] = useState(loadRooms);
-  const [lockers, setLockers] = useState(loadLockers);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [selectedClient, setSelectedClient] = useState(null);
   const [newClient, setNewClient] = useState(EMPTY_CLIENT);
   const [generatedLink, setGeneratedLink] = useState("");
   const [copied, setCopied] = useState(false);
+  const [returnAllRentals, setReturnAllRentals] = useState(true);
+  const [returnedIds, setReturnedIds] = useState([]);
 
   const rowHover = useColorModeValue("gray.50", "whiteAlpha.100");
   const paginationBorder = useColorModeValue("gray.100", "gray.700");
 
-  // Atualiza a lista em tempo real quando um auto-cadastro é feito
-  // (inclusive em outra aba, via evento de storage).
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === STORAGE_KEYS.CLIENTS_KEY) setClients(loadClients());
       if (e.key === STORAGE_KEYS.ROOMS_KEY) setRooms(loadRooms());
-      if (e.key === STORAGE_KEYS.LOCKERS_KEY) setLockers(loadLockers());
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // Link rápido do painel: /app/clients?add=1
+  useEffect(() => {
+    if (searchParams.get("add") === "1") {
+      setNewClient(EMPTY_CLIENT);
+      addModal.onOpen();
+      searchParams.delete("add");
+      setSearchParams(searchParams, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatDate = (iso, withTime = false) => {
@@ -150,9 +165,12 @@ function Clients() {
     }).format(new Date(iso));
   };
 
-  const countryLabel = (code) => t(`clients.countries.${code}`);
+  const languageLabels = (client) => {
+    const codes = getClientLanguages(client);
+    if (!codes.length) return "—";
+    return codes.map((code) => t(`clients.languages.${code}`)).join(", ");
+  };
 
-  // Filtra + ordena por cadastro mais recente
   const sortedClients = useMemo(() => {
     const term = searchTerm.toLowerCase();
     return clients
@@ -167,6 +185,10 @@ function Clients() {
     currentPage * PER_PAGE
   );
 
+  const openRentals = selectedClient
+    ? getOpenRentalsForClient(selectedClient.name)
+    : [];
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
     setPage(1);
@@ -175,35 +197,20 @@ function Clients() {
   const setNewClientField = (name, value) =>
     setNewClient((prev) => ({ ...prev, [name]: value }));
 
-  // Cadastro pelo balcão: origem definida automaticamente como "desk"
   const handleAddClient = () => {
-    const lockerId = newClient.lockerId || "";
-    const next = addClient({
+    addClient({
       ...newClient,
-      lockerId,
+      locker: (newClient.locker || "").trim(),
       source: SOURCE.DESK,
       registeredAt: new Date().toISOString(),
+      status: "checkedIn",
     });
-    if (lockerId) {
-      const { lockers: nextLockers, clients: synced } = assignLockerToClient(
-        lockerId,
-        newClient.name
-      );
-      setLockers(nextLockers);
-      setClients(synced);
-    } else {
-      setClients(next);
-    }
+    setClients(loadClients());
+    setRooms(loadRooms());
     setNewClient(EMPTY_CLIENT);
     setPage(1);
     addModal.onClose();
     showSuccess(t("clients.addSuccessTitle"), t("clients.addSuccessDesc"));
-  };
-
-  const lockerCodeOf = (lockerId) => {
-    if (!lockerId) return "—";
-    const found = lockers.find((lk) => lk.id === lockerId);
-    return found?.code || "—";
   };
 
   const openDetails = (client) => {
@@ -211,7 +218,28 @@ function Clients() {
     detailsModal.onOpen();
   };
 
-  // Gera um link único (simulado) de auto-cadastro
+  const openCheckout = () => {
+    const open = getOpenRentalsForClient(selectedClient.name);
+    setReturnAllRentals(true);
+    setReturnedIds(open.map((r) => r.id));
+    checkoutModal.onOpen();
+  };
+
+  const handleCheckout = () => {
+    const result = checkoutClient(selectedClient.name, {
+      returnAllRentals,
+      returnedIds,
+    });
+    setClients(result.clients);
+    setRooms(result.rooms);
+    setSelectedClient(
+      result.clients.find((c) => c.name === selectedClient.name) || null
+    );
+    checkoutModal.onClose();
+    detailsModal.onClose();
+    showSuccess(t("clients.checkoutSuccessTitle"), t("clients.checkoutSuccessDesc"));
+  };
+
   const handleGenerateLink = () => {
     const token = Math.random().toString(36).slice(2, 10);
     setGeneratedLink(`${window.location.origin}/cadastro/${token}`);
@@ -225,8 +253,14 @@ function Clients() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard indisponível: usuário pode copiar manualmente
+      // clipboard indisponível
     }
+  };
+
+  const toggleReturnedId = (id) => {
+    setReturnedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -259,7 +293,10 @@ function Clients() {
             {t("clients.generateLink")}
           </Button>
           <Button
-            onClick={addModal.onOpen}
+            onClick={() => {
+              setNewClient(EMPTY_CLIENT);
+              addModal.onOpen();
+            }}
             colorScheme="brand"
             leftIcon={<FiPlus />}
             flex={{ base: 1, md: "initial" }}
@@ -281,40 +318,56 @@ function Clients() {
                   <Th>{t("clients.room")}</Th>
                   <Th>{t("clients.country")}</Th>
                   <Th>{t("clients.registeredAtShort")}</Th>
+                  <Th>{t("clients.status")}</Th>
                   <Th>{t("clients.source")}</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {pageClients.map((client, index) => (
-                  <Tr
-                    key={`${client.email}-${index}`}
-                    onClick={() => openDetails(client)}
-                    cursor="pointer"
-                    _hover={{ bg: rowHover }}
-                    transition="background 0.15s"
-                  >
-                    <Td>
-                      <Flex align="center" gap={3}>
-                        <Avatar
-                          size="sm"
-                          name={client.name}
-                          src={client.photo || undefined}
-                        />
-                        <Text fontWeight={600} fontSize="sm">
-                          {client.name}
-                        </Text>
-                      </Flex>
-                    </Td>
-                    <Td fontSize="sm">{client.email}</Td>
-                    <Td fontSize="sm">{client.phone}</Td>
-                    <Td fontSize="sm">{client.room}</Td>
-                    <Td fontSize="sm">{countryLabel(client.country)}</Td>
-                    <Td fontSize="sm">{formatDate(client.registeredAt)}</Td>
-                    <Td>
-                      <SourceBadge source={client.source} t={t} />
-                    </Td>
-                  </Tr>
-                ))}
+                {pageClients.map((client, index) => {
+                  const checkedOut = client.status === "checkedOut";
+                  return (
+                    <Tr
+                      key={`${client.email}-${index}`}
+                      onClick={() => openDetails(client)}
+                      cursor="pointer"
+                      _hover={{ bg: rowHover }}
+                      opacity={checkedOut ? 0.65 : 1}
+                      transition="background 0.15s"
+                    >
+                      <Td>
+                        <Flex align="center" gap={3}>
+                          <Avatar
+                            size="sm"
+                            name={client.name}
+                            src={client.photo || undefined}
+                          />
+                          <Text fontWeight={600} fontSize="sm">
+                            {client.name}
+                          </Text>
+                        </Flex>
+                      </Td>
+                      <Td fontSize="sm">{client.email}</Td>
+                      <Td fontSize="sm">{client.phone}</Td>
+                      <Td fontSize="sm">{client.room}</Td>
+                      <Td fontSize="sm">{client.country || "—"}</Td>
+                      <Td fontSize="sm">{formatDate(client.registeredAt)}</Td>
+                      <Td>
+                        <Badge
+                          colorScheme={checkedOut ? "gray" : "green"}
+                          borderRadius="full"
+                          textTransform="none"
+                        >
+                          {checkedOut
+                            ? t("clients.statusCheckedOut")
+                            : t("clients.statusCheckedIn")}
+                        </Badge>
+                      </Td>
+                      <Td>
+                        <SourceBadge source={client.source} t={t} />
+                      </Td>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           </TableContainer>
@@ -326,7 +379,6 @@ function Clients() {
             </Flex>
           )}
 
-          {/* Paginação */}
           {sortedClients.length > 0 && (
             <Flex
               align="center"
@@ -362,7 +414,7 @@ function Clients() {
         </CardBody>
       </Card>
 
-      {/* Modal: detalhes do cliente */}
+      {/* Detalhes */}
       <Modal
         isOpen={detailsModal.isOpen}
         onClose={detailsModal.onClose}
@@ -388,9 +440,20 @@ function Clients() {
                   <Text fontSize="sm" color="gray.500" noOfLines={1}>
                     {selectedClient.email || "—"}
                   </Text>
-                  <Box mt={2}>
+                  <HStack mt={2} spacing={2}>
                     <SourceBadge source={selectedClient.source} t={t} />
-                  </Box>
+                    <Badge
+                      colorScheme={
+                        selectedClient.status === "checkedOut" ? "gray" : "green"
+                      }
+                      borderRadius="full"
+                      textTransform="none"
+                    >
+                      {selectedClient.status === "checkedOut"
+                        ? t("clients.statusCheckedOut")
+                        : t("clients.statusCheckedIn")}
+                    </Badge>
+                  </HStack>
                 </Box>
               </Flex>
 
@@ -404,7 +467,7 @@ function Clients() {
                   {selectedClient.room || "—"}
                 </InfoField>
                 <InfoField label={t("clients.locker")}>
-                  {lockerCodeOf(selectedClient.lockerId)}
+                  {getClientLocker(selectedClient) || "—"}
                 </InfoField>
                 <InfoField label={t("clients.cpf")}>
                   {selectedClient.cpf || "—"}
@@ -413,24 +476,99 @@ function Clients() {
                   {selectedClient.documentId || "—"}
                 </InfoField>
                 <InfoField label={t("clients.country")}>
-                  {countryLabel(selectedClient.country)}
+                  {selectedClient.country || "—"}
                 </InfoField>
                 <InfoField label={t("clients.languageMain")}>
-                  {t(`clients.languages.${selectedClient.language}`)}
+                  {languageLabels(selectedClient)}
                 </InfoField>
                 <InfoField label={t("clients.registeredAt")}>
                   {formatDate(selectedClient.registeredAt, true)}
                 </InfoField>
-                <InfoField label={t("clients.source")}>
-                  <SourceBadge source={selectedClient.source} t={t} />
-                </InfoField>
+                {selectedClient.checkedOutAt && (
+                  <InfoField label={t("clients.checkedOutAt")}>
+                    {formatDate(selectedClient.checkedOutAt, true)}
+                  </InfoField>
+                )}
               </SimpleGrid>
+
+              {selectedClient.status !== "checkedOut" && (
+                <Button
+                  mt={6}
+                  w="100%"
+                  colorScheme="orange"
+                  leftIcon={<FiLogOut />}
+                  onClick={openCheckout}
+                >
+                  {t("clients.checkout")}
+                </Button>
+              )}
             </ModalBody>
           )}
         </ModalContent>
       </Modal>
 
-      {/* Modal: adicionar cliente (balcão) */}
+      {/* Checkout */}
+      <Modal
+        isOpen={checkoutModal.isOpen}
+        onClose={checkoutModal.onClose}
+        isCentered
+      >
+        <ModalOverlay backdropFilter="blur(4px)" />
+        <ModalContent borderRadius="16px">
+          <ModalHeader>{t("clients.checkoutTitle")}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontSize="sm" color="gray.500" mb={4}>
+              {t("clients.checkoutDesc")}
+            </Text>
+
+            {openRentals.length > 0 ? (
+              <Stack spacing={3}>
+                <Checkbox
+                  colorScheme="brand"
+                  isChecked={returnAllRentals}
+                  onChange={(e) => {
+                    setReturnAllRentals(e.target.checked);
+                    if (e.target.checked) {
+                      setReturnedIds(openRentals.map((r) => r.id));
+                    } else {
+                      setReturnedIds([]);
+                    }
+                  }}
+                >
+                  {t("clients.returnAllRentals")}
+                </Checkbox>
+                <Divider />
+                {openRentals.map((rental) => (
+                  <Checkbox
+                    key={rental.id}
+                    colorScheme="brand"
+                    isChecked={returnedIds.includes(rental.id)}
+                    onChange={() => {
+                      setReturnAllRentals(false);
+                      toggleReturnedId(rental.id);
+                    }}
+                  >
+                    {t(`rentals.items.${rental.itemType}`)}
+                  </Checkbox>
+                ))}
+              </Stack>
+            ) : (
+              <Text fontSize="sm">{t("clients.noOpenRentals")}</Text>
+            )}
+          </ModalBody>
+          <ModalFooter gap={3}>
+            <Button variant="ghost" onClick={checkoutModal.onClose}>
+              {t("common.cancel")}
+            </Button>
+            <Button colorScheme="brand" onClick={handleCheckout}>
+              {t("clients.confirmCheckout")}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Adicionar */}
       <Modal isOpen={addModal.isOpen} onClose={addModal.onClose} isCentered size="xl">
         <ModalOverlay backdropFilter="blur(4px)" />
         <ModalContent borderRadius="16px">
@@ -441,21 +579,24 @@ function Clients() {
               values={newClient}
               setField={setNewClientField}
               rooms={rooms}
-              lockers={lockers}
             />
           </ModalBody>
           <ModalFooter gap={3}>
             <Button variant="ghost" onClick={addModal.onClose}>
               {t("common.cancel")}
             </Button>
-            <Button colorScheme="brand" onClick={handleAddClient}>
+            <Button
+              colorScheme="brand"
+              onClick={handleAddClient}
+              isDisabled={!newClient.name.trim()}
+            >
               {t("common.save")}
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
 
-      {/* Modal: gerar link de auto-cadastro */}
+      {/* Link */}
       <Modal isOpen={linkModal.isOpen} onClose={linkModal.onClose} isCentered>
         <ModalOverlay backdropFilter="blur(4px)" />
         <ModalContent borderRadius="16px">

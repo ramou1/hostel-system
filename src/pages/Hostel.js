@@ -40,7 +40,6 @@ import { FiPlus, FiSave, FiTrash2, FiHome } from "react-icons/fi";
 import { useI18n } from "../contexts/LanguageContext";
 import useToastService from "../services/ToastService";
 import {
-  COUNTRY_OPTIONS,
   loadHostel,
   saveHostel,
   loadLockers,
@@ -144,13 +143,7 @@ function Hostel() {
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm">{t("hostel.country")}</FormLabel>
-              <Select name="country" value={hostel.country} onChange={setField}>
-                {COUNTRY_OPTIONS.map((code) => (
-                  <option key={code} value={code}>
-                    {t(`clients.countries.${code}`)}
-                  </option>
-                ))}
-              </Select>
+              <Input name="country" value={hostel.country} onChange={setField} />
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm">{t("hostel.city")}</FormLabel>

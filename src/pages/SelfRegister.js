@@ -26,8 +26,9 @@ const EMPTY_CLIENT = {
   cpf: "",
   documentId: "",
   photo: "",
-  country: "BR",
-  language: "pt",
+  country: "",
+  languages: ["pt"],
+  locker: "",
 };
 
 function SelfRegister() {
@@ -52,6 +53,7 @@ function SelfRegister() {
       ...values,
       source: SOURCE.LINK,
       registeredAt: new Date().toISOString(),
+      status: "checkedIn",
     });
     setSubmitted(true);
   };

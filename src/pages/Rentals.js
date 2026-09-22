@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Badge,
   Button,
@@ -31,7 +31,8 @@ import {
   useDisclosure,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FiPlus, FiSearch, FiShoppingBag, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiSearch, FiShoppingBag, FiTrash2, FiCheck } from "react-icons/fi";
+import { useSearchParams } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
 import useToastService from "../services/ToastService";
 import {
@@ -39,6 +40,7 @@ import {
   loadRentals,
   addRental,
   removeRental,
+  markRentalReturned,
   loadClients,
 } from "../data/store";
 
@@ -53,10 +55,13 @@ function formatMoney(value, lang) {
 function Rentals() {
   const { t, lang } = useI18n();
   const { showSuccess } = useToastService();
+  const [searchParams, setSearchParams] = useSearchParams();
   const addModal = useDisclosure();
 
   const [rentals, setRentals] = useState(loadRentals);
-  const [clients] = useState(loadClients);
+  const [clients] = useState(() =>
+    loadClients().filter((c) => c.status !== "checkedOut")
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [form, setForm] = useState({
     itemType: "towel",
@@ -66,6 +71,16 @@ function Rentals() {
 
   const muted = useColorModeValue("gray.500", "gray.400");
   const rowHover = useColorModeValue("gray.50", "whiteAlpha.100");
+
+  useEffect(() => {
+    if (searchParams.get("add") === "1") {
+      setForm({ itemType: "towel", clientName: "", price: "" });
+      addModal.onOpen();
+      searchParams.delete("add");
+      setSearchParams(searchParams, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const clientNames = useMemo(
     () => [...new Set(clients.map((c) => c.name))].sort(),
@@ -114,6 +129,11 @@ function Rentals() {
     setRentals(removeRental(id));
   };
 
+  const handleMarkReturned = (id) => {
+    setRentals(markRentalReturned(id));
+    showSuccess(t("rentals.returnedTitle"), t("rentals.returnedDesc"));
+  };
+
   return (
     <>
       <Flex
@@ -152,6 +172,7 @@ function Rentals() {
                   <Th>{t("rentals.client")}</Th>
                   <Th>{t("rentals.price")}</Th>
                   <Th>{t("rentals.rentedAt")}</Th>
+                  <Th>{t("rentals.status")}</Th>
                   <Th />
                 </Tr>
               </Thead>
@@ -175,7 +196,29 @@ function Rentals() {
                     <Td fontSize="sm" color={muted}>
                       {formatDate(rental.rentedAt)}
                     </Td>
+                    <Td>
+                      <Badge
+                        colorScheme={rental.returned ? "green" : "orange"}
+                        borderRadius="full"
+                        textTransform="none"
+                      >
+                        {rental.returned
+                          ? t("rentals.statusReturned")
+                          : t("rentals.statusOpen")}
+                      </Badge>
+                    </Td>
                     <Td textAlign="right">
+                      {!rental.returned && (
+                        <IconButton
+                          aria-label={t("rentals.markReturned")}
+                          icon={<FiCheck />}
+                          size="sm"
+                          variant="ghost"
+                          colorScheme="green"
+                          mr={1}
+                          onClick={() => handleMarkReturned(rental.id)}
+                        />
+                      )}
                       <IconButton
                         aria-label={t("common.remove")}
                         icon={<FiTrash2 />}

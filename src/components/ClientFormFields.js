@@ -6,22 +6,34 @@ import {
   Input,
   Select,
   Box,
+  Checkbox,
+  CheckboxGroup,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { useI18n } from "../contexts/LanguageContext";
 import PhotoUpload from "./PhotoUpload";
-import { COUNTRY_OPTIONS, LANGUAGE_OPTIONS } from "../data/store";
+import { LANGUAGE_OPTIONS } from "../data/store";
 
 // Campos compartilhados entre o cadastro no balcão e o auto-cadastro (link).
-// `values` é o objeto do cliente e `setField(name, value)` atualiza um campo.
-// `lockers` é opcional — quando presente, permite associar um armário.
-function ClientFormFields({ values, setField, rooms = [], lockers = [] }) {
+// País e armário são texto livre; idiomas permitem múltipla escolha.
+function ClientFormFields({ values, setField, rooms = [] }) {
   const { t } = useI18n();
 
   const handle = (e) => setField(e.target.name, e.target.value);
 
-  const availableLockers = lockers.filter(
-    (lk) => !lk.clientName || lk.id === values.lockerId
-  );
+  const selectedLanguages = Array.isArray(values.languages)
+    ? values.languages
+    : values.language
+      ? [values.language]
+      : [];
+
+  const toggleLanguage = (code) => {
+    const next = selectedLanguages.includes(code)
+      ? selectedLanguages.filter((l) => l !== code)
+      : [...selectedLanguages, code];
+    setField("languages", next);
+  };
 
   return (
     <Box>
@@ -83,19 +95,12 @@ function ClientFormFields({ values, setField, rooms = [], lockers = [] }) {
           <FormLabel fontSize="sm">
             {t("clients.locker")} {t("clients.optionalTag")}
           </FormLabel>
-          <Select
-            name="lockerId"
-            placeholder={t("clients.selectLocker")}
-            value={values.lockerId || ""}
+          <Input
+            name="locker"
+            placeholder={t("clients.lockerPlaceholder")}
+            value={values.locker || ""}
             onChange={handle}
-          >
-            <option value="">{t("clients.noLocker")}</option>
-            {availableLockers.map((lk) => (
-              <option key={lk.id} value={lk.id}>
-                {lk.code}
-              </option>
-            ))}
-          </Select>
+          />
         </FormControl>
 
         <FormControl>
@@ -124,26 +129,33 @@ function ClientFormFields({ values, setField, rooms = [], lockers = [] }) {
 
         <FormControl>
           <FormLabel fontSize="sm">{t("clients.country")}</FormLabel>
-          <Select name="country" value={values.country} onChange={handle}>
-            {COUNTRY_OPTIONS.map((code) => (
-              <option key={code} value={code}>
-                {t(`clients.countries.${code}`)}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl>
-          <FormLabel fontSize="sm">{t("clients.languageMain")}</FormLabel>
-          <Select name="language" value={values.language} onChange={handle}>
-            {LANGUAGE_OPTIONS.map((code) => (
-              <option key={code} value={code}>
-                {t(`clients.languages.${code}`)}
-              </option>
-            ))}
-          </Select>
+          <Input
+            name="country"
+            placeholder={t("clients.countryPlaceholder")}
+            value={values.country || ""}
+            onChange={handle}
+          />
         </FormControl>
       </SimpleGrid>
+
+      <FormControl mt={4}>
+        <FormLabel fontSize="sm">{t("clients.languageMain")}</FormLabel>
+        <CheckboxGroup value={selectedLanguages}>
+          <Wrap spacing={3}>
+            {LANGUAGE_OPTIONS.map((code) => (
+              <WrapItem key={code}>
+                <Checkbox
+                  colorScheme="brand"
+                  isChecked={selectedLanguages.includes(code)}
+                  onChange={() => toggleLanguage(code)}
+                >
+                  {t(`clients.languages.${code}`)}
+                </Checkbox>
+              </WrapItem>
+            ))}
+          </Wrap>
+        </CheckboxGroup>
+      </FormControl>
     </Box>
   );
 }

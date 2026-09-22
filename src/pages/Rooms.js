@@ -45,8 +45,6 @@ function Rooms() {
   const [newRoom, setNewRoom] = useState({
     name: "",
     capacity: "",
-    clients: "",
-    availableSpaces: "",
     type: "male",
   });
 
@@ -62,25 +60,20 @@ function Rooms() {
   };
 
   const handleAddRoom = () => {
+    const capacity = Number(newRoom.capacity) || 0;
     const next = [
       ...rooms,
       {
         name: newRoom.name,
-        capacity: Number(newRoom.capacity) || 0,
-        clients: Number(newRoom.clients) || 0,
-        availableSpaces: Number(newRoom.availableSpaces) || 0,
+        capacity,
+        clients: 0,
+        availableSpaces: capacity,
         type: newRoom.type,
       },
     ];
     setRooms(next);
     saveRooms(next);
-    setNewRoom({
-      name: "",
-      capacity: "",
-      clients: "",
-      availableSpaces: "",
-      type: "male",
-    });
+    setNewRoom({ name: "", capacity: "", type: "male" });
     showSuccess(t("rooms.addSuccessTitle"), t("rooms.addSuccessDesc"));
     onClose();
   };
@@ -163,7 +156,7 @@ function Rooms() {
           <ModalHeader>{t("rooms.addTitle")}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl mb={3}>
+            <FormControl mb={3} isRequired>
               <FormLabel fontSize="sm">{t("rooms.name")}</FormLabel>
               <Input
                 placeholder={t("rooms.name")}
@@ -172,7 +165,7 @@ function Rooms() {
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl mb={3}>
+            <FormControl mb={3} isRequired>
               <FormLabel fontSize="sm">{t("rooms.capacity")}</FormLabel>
               <Input
                 type="number"
@@ -180,24 +173,9 @@ function Rooms() {
                 value={newRoom.capacity}
                 onChange={handleInputChange}
               />
-            </FormControl>
-            <FormControl mb={3}>
-              <FormLabel fontSize="sm">{t("rooms.clients")}</FormLabel>
-              <Input
-                type="number"
-                name="clients"
-                value={newRoom.clients}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mb={3}>
-              <FormLabel fontSize="sm">{t("rooms.availableSpaces")}</FormLabel>
-              <Input
-                type="number"
-                name="availableSpaces"
-                value={newRoom.availableSpaces}
-                onChange={handleInputChange}
-              />
+              <Text fontSize="xs" color="gray.500" mt={1}>
+                {t("rooms.clientsAutoHint")}
+              </Text>
             </FormControl>
             <FormControl mb={3}>
               <FormLabel fontSize="sm">{t("rooms.type")}</FormLabel>
@@ -212,7 +190,11 @@ function Rooms() {
             <Button variant="ghost" onClick={onClose}>
               {t("common.cancel")}
             </Button>
-            <Button colorScheme="brand" onClick={handleAddRoom}>
+            <Button
+              colorScheme="brand"
+              onClick={handleAddRoom}
+              isDisabled={!newRoom.name.trim()}
+            >
               {t("common.save")}
             </Button>
           </ModalFooter>
