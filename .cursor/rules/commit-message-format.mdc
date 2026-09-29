@@ -1,0 +1,42 @@
+﻿---
+description: Padroniza mensagens de commit (feat/fix em inglês, vírgulas) quando o usuário pedir texto de commit ou ao criar commits
+alwaysApply: true
+---
+
+# Formato de mensagem de commit
+
+Quando o usuário enviar demandas em tópicos (descrição completa) para transformar em commit, ou ao redigir a mensagem de um `git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>"`, use este padrão.
+
+## Regras
+
+- Texto da mensagem **em inglês**
+- Cada demanda começa com **`feat:`** (implementação nova) ou **`fix:`** (correção/ajuste)
+- Demandas separadas por **vírgula**
+- Resposta no formato: `commit -m "..."`
+- Mensagem **resumida** (não copiar a descrição longa dos tópicos)
+
+## Classificação
+
+- **`feat:`** — funcionalidade ou comportamento novo
+- **`fix:`** — bug, inconsistência, ajuste de regra/layout/fluxo existente
+
+## Exemplo
+
+Entrada do usuário:
+
+```text
+- Implementada função de marcar um fluxo como pagos através da modal de Detalhes do Fluxo
+- Identificar visualmente os fluxos pagos nos cards mensais
+- Diferenciar visualmente se os fluxos estão pendentes ou atrasados, a partir da sua data de vencimento
+```
+
+Saída:
+
+```text
+commit -m "feat: mark flow as paid from details modal, feat: visually identify paid flows in monthly cards, feat: visually differentiate pending and overdue flows by due date"
+```
+
+## Observações
+
+- Não inventar demandas que o usuário não listou
+- Se houver só uma demanda, ainda assim use o prefixo e o formato `commit -m "..."`
