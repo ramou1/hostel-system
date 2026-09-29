@@ -17,9 +17,6 @@ import {
   List,
   ListItem,
   ListIcon,
-  IconButton,
-  useColorMode,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -27,8 +24,6 @@ import {
   FiBarChart2,
   FiGlobe,
   FiCheck,
-  FiSun,
-  FiMoon,
   FiArrowRight,
 } from "react-icons/fi";
 import { Link as RouterLink } from "react-router-dom";
@@ -39,15 +34,13 @@ import BrandLogo from "../components/BrandLogo";
 const FEATURE_ICONS = [FiHome, FiUsers, FiBarChart2, FiGlobe];
 
 function Brand() {
-  return <BrandLogo height="30px" />;
+  return <BrandLogo height="30px" forceLight />;
 }
 
 function Landing() {
   const { t, lang, setLang } = useI18n();
-  const { colorMode, toggleColorMode } = useColorMode();
   const { isAuthenticated } = useAuth();
 
-  // Cabeçalho transparente no topo; ganha fundo/blur ao rolar
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -56,21 +49,6 @@ function Landing() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const pageBg = useColorModeValue("white", "gray.900");
-  const heroBg = useColorModeValue(
-    "linear(to-b, brand.50, white)",
-    "linear(to-b, gray.800, gray.900)"
-  );
-  const muted = useColorModeValue("gray.600", "gray.400");
-  const sectionBg = useColorModeValue("gray.50", "gray.800");
-  const footerBorder = useColorModeValue("gray.100", "gray.700");
-  const cardBorder = useColorModeValue("gray.100", "gray.700");
-  // Fundo do header ao rolar: cinza neutro (sem tom azulado do gray.900 do Chakra)
-  const navBg = useColorModeValue(
-    "rgba(255, 255, 255, 0.82)",
-    "rgba(36, 36, 38, 0.78)"
-  );
-
   const features = t("landing.features.items");
   const plans = t("landing.pricing.plans");
 
@@ -78,8 +56,7 @@ function Landing() {
   const primaryTo = isAuthenticated ? "/app" : "/login";
 
   return (
-    <Box bg={pageBg} minH="100vh">
-      {/* Navbar */}
+    <Box bg="white" minH="100vh" color="gray.800">
       <Box
         as="header"
         position="fixed"
@@ -87,7 +64,7 @@ function Landing() {
         left={0}
         right={0}
         zIndex={10}
-        bg={scrolled ? navBg : "transparent"}
+        bg={scrolled ? "rgba(255, 255, 255, 0.82)" : "transparent"}
         backdropFilter={scrolled ? "blur(12px)" : "none"}
         border="none"
         boxShadow="none"
@@ -97,13 +74,6 @@ function Landing() {
           <Flex align="center" justify="space-between" h="64px">
             <Brand />
             <HStack spacing={2}>
-              <IconButton
-                aria-label="Toggle theme"
-                icon={colorMode === "light" ? <FiMoon /> : <FiSun />}
-                variant="ghost"
-                size="sm"
-                onClick={toggleColorMode}
-              />
               <Button
                 size="sm"
                 variant="ghost"
@@ -125,7 +95,7 @@ function Landing() {
       </Box>
 
       {/* Hero */}
-      <Box bgGradient={heroBg}>
+      <Box bgGradient="linear(to-b, brand.50, white)">
         <Container maxW="4xl" py={{ base: 16, md: 28 }} textAlign="center">
           <Badge
             colorScheme="brand"
@@ -147,7 +117,7 @@ function Landing() {
           >
             {t("landing.hero.title")}
           </Heading>
-          <Text fontSize={{ base: "md", md: "xl" }} color={muted} maxW="640px" mx="auto" mb={8}>
+          <Text fontSize={{ base: "md", md: "xl" }} color="gray.600" maxW="640px" mx="auto" mb={8}>
             {t("landing.hero.subtitle")}
           </Text>
           <HStack spacing={4} justify="center" flexWrap="wrap">
@@ -173,14 +143,14 @@ function Landing() {
           <Heading as="h2" fontSize={{ base: "2xl", md: "3xl" }}>
             {t("landing.features.title")}
           </Heading>
-          <Text color={muted} maxW="560px">
+          <Text color="gray.600" maxW="560px">
             {t("landing.features.subtitle")}
           </Text>
         </VStack>
 
         <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={6}>
           {features.map((feature, i) => (
-            <Card key={i} borderWidth="1px" borderColor={cardBorder}>
+            <Card key={i} borderWidth="1px" borderColor="gray.100" bg="white">
               <CardBody>
                 <Flex
                   align="center"
@@ -195,7 +165,7 @@ function Landing() {
                 <Heading as="h3" fontSize="md" mb={2}>
                   {feature.title}
                 </Heading>
-                <Text fontSize="sm" color={muted}>
+                <Text fontSize="sm" color="gray.600">
                   {feature.text}
                 </Text>
               </CardBody>
@@ -205,13 +175,13 @@ function Landing() {
       </Container>
 
       {/* Pricing */}
-      <Box bg={sectionBg} id="planos">
+      <Box bg="gray.50" id="planos">
         <Container maxW="6xl" py={{ base: 16, md: 24 }}>
           <VStack spacing={3} mb={12} textAlign="center">
             <Heading as="h2" fontSize={{ base: "2xl", md: "3xl" }}>
               {t("landing.pricing.title")}
             </Heading>
-            <Text color={muted} maxW="560px">
+            <Text color="gray.600" maxW="560px">
               {t("landing.pricing.subtitle")}
             </Text>
           </VStack>
@@ -222,8 +192,9 @@ function Landing() {
               return (
                 <Card
                   key={i}
+                  bg="white"
                   borderWidth={highlighted ? "2px" : "1px"}
-                  borderColor={highlighted ? "brand.500" : cardBorder}
+                  borderColor={highlighted ? "brand.500" : "gray.100"}
                   transform={{ md: highlighted ? "scale(1.03)" : "none" }}
                   position="relative"
                   overflow="visible"
@@ -249,14 +220,14 @@ function Landing() {
                         <Text fontWeight={700} fontSize="lg">
                           {plan.name}
                         </Text>
-                        <Text fontSize="sm" color={muted}>
+                        <Text fontSize="sm" color="gray.600">
                           {plan.desc}
                         </Text>
                       </Box>
                       <Flex align="baseline" gap={1}>
                         <Heading fontSize="3xl">{plan.price}</Heading>
                         {plan.price.match(/\d/) && (
-                          <Text color={muted} fontSize="sm">
+                          <Text color="gray.600" fontSize="sm">
                             {t("landing.pricing.perMonth")}
                           </Text>
                         )}
@@ -288,7 +259,7 @@ function Landing() {
       </Box>
 
       {/* Footer */}
-      <Box borderTop="1px solid" borderColor={footerBorder}>
+      <Box borderTop="1px solid" borderColor="gray.100">
         <Container maxW="6xl" py={8}>
           <Flex
             align="center"
@@ -297,10 +268,10 @@ function Landing() {
             gap={3}
           >
             <Brand />
-            <Text fontSize="sm" color={muted}>
+            <Text fontSize="sm" color="gray.600">
               {t("landing.footer")}
             </Text>
-            <Text fontSize="sm" color={muted}>
+            <Text fontSize="sm" color="gray.600">
               © {new Date().getFullYear()} Hostely
             </Text>
           </Flex>

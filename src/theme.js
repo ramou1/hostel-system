@@ -1,9 +1,9 @@
 import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 
-// Dark mode como padrão, conforme solicitado
+// Tema claro como padrão nas telas públicas; o escuro só após o login
 const config = {
-  initialColorMode: "dark",
+  initialColorMode: "light",
   useSystemColorMode: false,
 };
 

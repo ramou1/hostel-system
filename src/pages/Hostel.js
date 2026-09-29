@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardBody,
+  Checkbox,
   Divider,
   Flex,
   FormControl,
@@ -12,6 +13,7 @@ import {
   HStack,
   Icon,
   IconButton,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -36,9 +38,10 @@ import {
   useDisclosure,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FiPlus, FiSave, FiTrash2, FiHome } from "react-icons/fi";
+import { FiPlus, FiSave, FiTrash2, FiHome, FiImage } from "react-icons/fi";
 import { useI18n } from "../contexts/LanguageContext";
 import useToastService from "../services/ToastService";
+import { resizeImage } from "../components/PhotoUpload";
 import {
   loadHostel,
   saveHostel,
@@ -62,6 +65,7 @@ function Hostel() {
 
   const muted = useColorModeValue("gray.500", "gray.400");
   const sectionBg = useColorModeValue("gray.50", "whiteAlpha.50");
+  const mapBorder = useColorModeValue("gray.200", "gray.600");
 
   const clientNames = useMemo(
     () => [...new Set(clients.map((c) => c.name))].sort(),
@@ -72,6 +76,47 @@ function Hostel() {
     const { name, value } = e.target;
     setHostel((prev) => ({ ...prev, [name]: value }));
   };
+
+  const setAmenity = (key) => (e) => {
+    const checked = e.target.checked;
+    setHostel((prev) => ({
+      ...prev,
+      amenities: { ...prev.amenities, [key]: checked },
+    }));
+  };
+
+  const handlePhotos = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    try {
+      const urls = [];
+      for (const file of files) {
+        urls.push(await resizeImage(file, 640));
+      }
+      setHostel((prev) => ({
+        ...prev,
+        photos: [...(prev.photos || []), ...urls].slice(0, 8),
+      }));
+    } catch {
+      // ignora falha de processamento
+    } finally {
+      e.target.value = "";
+    }
+  };
+
+  const removePhoto = (index) => {
+    setHostel((prev) => ({
+      ...prev,
+      photos: (prev.photos || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const lat = Number(hostel.lat);
+  const lng = Number(hostel.lng);
+  const hasMap = Number.isFinite(lat) && Number.isFinite(lng) && hostel.lat && hostel.lng;
+  const mapSrc = hasMap
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01}%2C${lat - 0.01}%2C${lng + 0.01}%2C${lat + 0.01}&layer=mapnik&marker=${lat}%2C${lng}`
+    : "";
 
   const handleSaveHostel = () => {
     saveHostel(hostel);
@@ -153,6 +198,44 @@ function Hostel() {
               <FormLabel fontSize="sm">{t("hostel.address")}</FormLabel>
               <Input name="address" value={hostel.address} onChange={setField} />
             </FormControl>
+            <FormControl>
+              <FormLabel fontSize="sm">{t("hostel.lat")}</FormLabel>
+              <Input name="lat" value={hostel.lat || ""} onChange={setField} />
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="sm">{t("hostel.lng")}</FormLabel>
+              <Input name="lng" value={hostel.lng || ""} onChange={setField} />
+            </FormControl>
+            <FormControl gridColumn={{ md: "1 / -1" }}>
+              <FormLabel fontSize="sm">{t("hostel.mapTitle")}</FormLabel>
+              <Text fontSize="xs" color={muted} mb={2}>
+                {t("hostel.mapHint")}
+              </Text>
+              {hasMap ? (
+                <Box
+                  as="iframe"
+                  title={t("hostel.mapTitle")}
+                  src={mapSrc}
+                  w="100%"
+                  h="240px"
+                  border="1px solid"
+                  borderColor={mapBorder}
+                  borderRadius="12px"
+                />
+              ) : (
+                <Flex
+                  align="center"
+                  justify="center"
+                  h="160px"
+                  bg={sectionBg}
+                  borderRadius="12px"
+                >
+                  <Text fontSize="sm" color={muted}>
+                    {t("hostel.mapPlaceholder")}
+                  </Text>
+                </Flex>
+              )}
+            </FormControl>
             <FormControl gridColumn={{ md: "1 / -1" }}>
               <FormLabel fontSize="sm">{t("hostel.description")}</FormLabel>
               <Textarea
@@ -163,6 +246,85 @@ function Hostel() {
               />
             </FormControl>
           </SimpleGrid>
+
+          <Divider my={6} />
+
+          <FormControl mb={6}>
+            <FormLabel fontSize="sm">{t("hostel.amenitiesTitle")}</FormLabel>
+            <Text fontSize="xs" color={muted} mb={3}>
+              {t("hostel.amenitiesHint")}
+            </Text>
+            <Stack spacing={2}>
+              <Checkbox
+                colorScheme="brand"
+                isChecked={!!hostel.amenities?.sharedKitchen}
+                onChange={setAmenity("sharedKitchen")}
+              >
+                {t("hostel.amenityKitchen")}
+              </Checkbox>
+              <Checkbox
+                colorScheme="brand"
+                isChecked={!!hostel.amenities?.lockers}
+                onChange={setAmenity("lockers")}
+              >
+                {t("hostel.amenityLockers")}
+              </Checkbox>
+            </Stack>
+          </FormControl>
+
+          <FormControl mb={6}>
+            <FormLabel fontSize="sm">{t("hostel.photosTitle")}</FormLabel>
+            <Text fontSize="xs" color={muted} mb={3}>
+              {t("hostel.photosHint")}
+            </Text>
+            <input
+              id="hostel-photos"
+              type="file"
+              accept="image/*"
+              multiple
+              style={{ display: "none" }}
+              onChange={handlePhotos}
+            />
+            <Button
+              size="sm"
+              variant="outline"
+              leftIcon={<FiImage />}
+              onClick={() => document.getElementById("hostel-photos")?.click()}
+              mb={3}
+            >
+              {t("hostel.photosAdd")}
+            </Button>
+            {(hostel.photos || []).length === 0 ? (
+              <Text fontSize="sm" color={muted}>
+                {t("hostel.photosEmpty")}
+              </Text>
+            ) : (
+              <SimpleGrid columns={{ base: 2, sm: 4 }} spacing={3}>
+                {hostel.photos.map((src, index) => (
+                  <Box key={`${index}-${src.slice(-8)}`} position="relative">
+                    <Image
+                      src={src}
+                      alt=""
+                      h="88px"
+                      w="100%"
+                      objectFit="cover"
+                      borderRadius="10px"
+                    />
+                    <IconButton
+                      aria-label={t("common.remove")}
+                      icon={<FiTrash2 />}
+                      size="xs"
+                      colorScheme="red"
+                      position="absolute"
+                      top={1}
+                      right={1}
+                      onClick={() => removePhoto(index)}
+                    />
+                  </Box>
+                ))}
+              </SimpleGrid>
+            )}
+          </FormControl>
 
           <Divider my={6} />
 

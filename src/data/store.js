@@ -25,11 +25,32 @@ export const RENTAL_ITEM_TYPES = [
 export const COUNTRY_OPTIONS = ["BR", "AR", "US", "PT", "CL", "FR", "DE", "ES", "IT"];
 export const LANGUAGE_OPTIONS = ["pt", "en", "es", "fr", "de", "it"];
 
+export const ROOM_CATEGORIES = ["private", "dorm"];
+export const BED_TYPES = ["single", "double", "queen", "bunk"];
+export const BATHROOM_TYPES = ["private", "shared"];
+
+export function normalizeRoom(room = {}) {
+  const category = room.category === "private" ? "private" : "dorm";
+  return {
+    name: room.name || "",
+    category,
+    capacity: Number(room.capacity) || 0,
+    clients: Number(room.clients) || 0,
+    availableSpaces:
+      room.availableSpaces != null
+        ? Number(room.availableSpaces)
+        : Math.max(0, (Number(room.capacity) || 0) - (Number(room.clients) || 0)),
+    type: category === "dorm" ? room.type || "mixed" : room.type || "mixed",
+    bedType: room.bedType || (category === "private" ? "double" : "bunk"),
+    bathroom: room.bathroom || (category === "private" ? "private" : "shared"),
+  };
+}
+
 export const INITIAL_ROOMS = [
-  { name: "Quarto 101", capacity: 2, clients: 2, availableSpaces: 0, type: "male" },
-  { name: "Quarto 102", capacity: 3, clients: 1, availableSpaces: 2, type: "female" },
-  { name: "Quarto 103", capacity: 4, clients: 3, availableSpaces: 1, type: "mixed" },
-  { name: "Quarto 104", capacity: 5, clients: 5, availableSpaces: 0, type: "female" },
+  normalizeRoom({ name: "Quarto 101", capacity: 2, clients: 2, availableSpaces: 0, type: "male", category: "dorm", bedType: "bunk", bathroom: "shared" }),
+  normalizeRoom({ name: "Quarto 102", capacity: 3, clients: 1, availableSpaces: 2, type: "female", category: "dorm", bedType: "single", bathroom: "shared" }),
+  normalizeRoom({ name: "Suíte 201", capacity: 2, clients: 0, availableSpaces: 2, type: "mixed", category: "private", bedType: "double", bathroom: "private" }),
+  normalizeRoom({ name: "Quarto 104", capacity: 5, clients: 5, availableSpaces: 0, type: "female", category: "dorm", bedType: "bunk", bathroom: "shared" }),
 ];
 
 export const INITIAL_HOSTEL = {
@@ -38,11 +59,18 @@ export const INITIAL_HOSTEL = {
   phone: "(21) 98888-0000",
   address: "Rua das Ondas, 120",
   city: "Rio de Janeiro",
-  country: "BR",
+  country: "Brasil",
+  lat: "-22.9714",
+  lng: "-43.1823",
   description:
     "Hostel à beira-mar, com quartos mistos e privativos, área comum e cozinha compartilhada.",
   rules:
     "1. Silêncio após as 22h.\n2. Respeite os outros hóspedes.\n3. Não fume nos quartos.\n4. Guarde seus pertences no armário.\n5. Check-out até as 11h.",
+  amenities: {
+    sharedKitchen: true,
+    lockers: true,
+  },
+  photos: [],
 };
 
 export const INITIAL_LOCKERS = [
@@ -266,7 +294,7 @@ export function getOpenRentalsForClient(clientName) {
 
 // ----- Quartos -----
 export function loadRooms() {
-  return readJSON(ROOMS_KEY, INITIAL_ROOMS);
+  return readJSON(ROOMS_KEY, INITIAL_ROOMS).map(normalizeRoom);
 }
 
 export function saveRooms(list) {
@@ -275,7 +303,16 @@ export function saveRooms(list) {
 
 // ----- Hostel -----
 export function loadHostel() {
-  return readJSON(HOSTEL_KEY, INITIAL_HOSTEL);
+  const saved = readJSON(HOSTEL_KEY, INITIAL_HOSTEL);
+  return {
+    ...INITIAL_HOSTEL,
+    ...saved,
+    amenities: {
+      ...INITIAL_HOSTEL.amenities,
+      ...(saved.amenities || {}),
+    },
+    photos: Array.isArray(saved.photos) ? saved.photos : [],
+  };
 }
 
 export function saveHostel(data) {

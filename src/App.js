@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Box,
   IconButton,
   Drawer,
   DrawerOverlay,
   DrawerContent,
+  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -22,6 +23,8 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import RequireAuth from "./components/RequireAuth";
 import DocumentTitle from "./components/DocumentTitle";
+import ForceLightMode from "./components/ForceLightMode";
+import { readAppColorMode } from "./utils/colorModePrefs";
 import "./App.css";
 
 const PROFILE_KEY = "hostelzim:profile";
@@ -56,6 +59,11 @@ function AppShell() {
   const [collapsed, setCollapsed] = useState(false);
   const [profile, setProfile] = useState(loadProfile);
   const mobileNav = useDisclosure();
+  const { setColorMode } = useColorMode();
+
+  useLayoutEffect(() => {
+    setColorMode(readAppColorMode());
+  }, [setColorMode]);
 
   useEffect(() => {
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
@@ -132,15 +140,24 @@ function AppShell() {
   );
 }
 
+function PublicLayout() {
+  return (
+    <ForceLightMode>
+      <Outlet />
+    </ForceLightMode>
+  );
+}
+
 function App() {
   return (
     <>
       <DocumentTitle />
       <Routes>
-        {/* Páginas públicas */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cadastro/:token" element={<SelfRegister />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/cadastro/:token" element={<SelfRegister />} />
+        </Route>
 
         {/* Área administrativa (protegida por login) */}
         <Route

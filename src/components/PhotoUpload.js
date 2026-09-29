@@ -5,7 +5,7 @@ import { useI18n } from "../contexts/LanguageContext";
 
 // Redimensiona a imagem para no máximo `max` px (mantendo proporção)
 // e retorna um dataURL JPEG, evitando estourar a cota do localStorage.
-function resizeImage(file, max = 256) {
+export function resizeImage(file, max = 256) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = reject;

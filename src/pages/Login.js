@@ -17,7 +17,6 @@ import {
   Alert,
   AlertIcon,
   Link as ChakraLink,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi";
 import { Link as RouterLink, useNavigate, useLocation, Navigate } from "react-router-dom";
@@ -37,9 +36,9 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageBg = useColorModeValue("gray.100", "gray.900");
-  const muted = useColorModeValue("gray.500", "gray.400");
-  const hintBg = useColorModeValue("gray.50", "whiteAlpha.100");
+  const pageBg = "gray.100";
+  const muted = "gray.500";
+  const hintBg = "gray.50";
 
   const from = location.state?.from?.pathname || "/app";
 
@@ -60,10 +59,10 @@ function Login() {
     <Flex minH="100vh" bg={pageBg} align="center" justify="center" p={4}>
       <Box w="100%" maxW="420px">
         <Flex direction="column" align="center" mb={6}>
-          <BrandLogo height="48px" />
+          <BrandLogo height="48px" forceLight />
         </Flex>
 
-        <Card>
+        <Card bg="white">
           <CardBody p={{ base: 6, md: 8 }}>
             <Heading as="h1" fontSize="2xl" mb={1}>
               {t("auth.loginTitle")}

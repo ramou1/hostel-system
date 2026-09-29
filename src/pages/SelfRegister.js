@@ -9,7 +9,6 @@ import {
   Button,
   Icon,
   Divider,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { FiCheckCircle } from "react-icons/fi";
 import ClientFormFields from "../components/ClientFormFields";
@@ -38,8 +37,8 @@ function SelfRegister() {
   const [values, setValues] = useState(EMPTY_CLIENT);
   const [submitted, setSubmitted] = useState(false);
 
-  const pageBg = useColorModeValue("gray.100", "gray.900");
-  const muted = useColorModeValue("gray.500", "gray.400");
+  const pageBg = "gray.100";
+  const muted = "gray.500";
 
   const setField = (name, value) =>
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -62,10 +61,10 @@ function SelfRegister() {
     <Flex minH="100vh" bg={pageBg} align="center" justify="center" p={4}>
       <Box w="100%" maxW="640px">
         <Flex direction="column" align="center" mb={6}>
-          <BrandLogo height="48px" />
+          <BrandLogo height="48px" forceLight />
         </Flex>
 
-        <Card>
+        <Card bg="white">
           <CardBody p={{ base: 5, md: 8 }}>
             {submitted ? (
               <Flex direction="column" align="center" textAlign="center" py={6}>

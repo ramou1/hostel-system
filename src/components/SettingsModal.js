@@ -24,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { FiSun, FiMoon, FiGlobe } from "react-icons/fi";
 import { useI18n } from "../contexts/LanguageContext";
+import { saveAppColorMode } from "../utils/colorModePrefs";
 
 // Botão de opção reutilizável (para tema e idioma)
 function ChoiceButton({ active, onClick, icon, children }) {
@@ -118,14 +119,20 @@ function SettingsModal({ isOpen, onClose, profile, onSave }) {
             <Flex gap={3}>
               <ChoiceButton
                 active={colorMode === "light"}
-                onClick={() => setColorMode("light")}
+                onClick={() => {
+                  setColorMode("light");
+                  saveAppColorMode("light");
+                }}
                 icon={FiSun}
               >
                 {t("settings.light")}
               </ChoiceButton>
               <ChoiceButton
                 active={colorMode === "dark"}
-                onClick={() => setColorMode("dark")}
+                onClick={() => {
+                  setColorMode("dark");
+                  saveAppColorMode("dark");
+                }}
                 icon={FiMoon}
               >
                 {t("settings.dark")}
