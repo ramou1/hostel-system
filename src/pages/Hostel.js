@@ -274,9 +274,6 @@ function Hostel() {
 
           <FormControl mb={6}>
             <FormLabel fontSize="sm">{t("hostel.photosTitle")}</FormLabel>
-            <Text fontSize="xs" color={muted} mb={3}>
-              {t("hostel.photosHint")}
-            </Text>
             <input
               id="hostel-photos"
               type="file"
