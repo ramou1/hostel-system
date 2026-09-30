@@ -5,6 +5,9 @@
 const CLIENTS_KEY = "hostelzim:clients";
 const ROOMS_KEY = "hostelzim:rooms";
 const HOSTEL_KEY = "hostelzim:hostel";
+const HOSTELS_KEY = "hostelzim:hostels";
+const ACTIVE_HOSTEL_KEY = "hostelzim:activeHostelId";
+const ACCOUNT_KEY = "hostelzim:account";
 const LOCKERS_KEY = "hostelzim:lockers";
 const RENTALS_KEY = "hostelzim:rentals";
 
@@ -72,6 +75,50 @@ export const INITIAL_HOSTEL = {
   },
   photos: [],
 };
+
+export const EMPTY_HOSTEL = {
+  name: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  country: "",
+  lat: "",
+  lng: "",
+  description: "",
+  rules: "",
+  amenities: {
+    sharedKitchen: false,
+    lockers: false,
+  },
+  photos: [],
+};
+
+export const PLAN_IDS = ["basic", "pro", "enterprise"];
+
+export const PLANS = {
+  basic: { id: "basic", maxHostels: 1 },
+  pro: { id: "pro", maxHostels: 5 },
+  enterprise: { id: "enterprise", maxHostels: Number.POSITIVE_INFINITY },
+};
+
+export function getPlan(planId) {
+  return PLANS[planId] || PLANS.basic;
+}
+
+export function normalizeHostel(data = {}) {
+  return {
+    ...EMPTY_HOSTEL,
+    ...data,
+    amenities: {
+      ...EMPTY_HOSTEL.amenities,
+      ...(data.amenities || {}),
+    },
+    photos: Array.isArray(data.photos) ? data.photos : [],
+  };
+}
+
+const INITIAL_ACCOUNT = { planId: "pro" };
 
 export const INITIAL_LOCKERS = [
   { id: "lk-1", code: "A-01", clientName: "Ana Beatriz" },
@@ -301,24 +348,103 @@ export function saveRooms(list) {
   localStorage.setItem(ROOMS_KEY, JSON.stringify(list));
 }
 
-// ----- Hostel -----
+// ----- Conta e hostels -----
+export function loadAccount() {
+  return { ...INITIAL_ACCOUNT, ...readJSON(ACCOUNT_KEY, INITIAL_ACCOUNT) };
+}
+
+export function saveAccount(data) {
+  const next = { ...loadAccount(), ...data };
+  localStorage.setItem(ACCOUNT_KEY, JSON.stringify(next));
+  return next;
+}
+
+function persistHostels(list, activeId) {
+  localStorage.setItem(HOSTELS_KEY, JSON.stringify(list));
+  const resolved =
+    activeId && list.some((h) => h.id === activeId) ? activeId : list[0]?.id;
+  if (resolved) localStorage.setItem(ACTIVE_HOSTEL_KEY, resolved);
+  const active = list.find((h) => h.id === resolved);
+  if (active) {
+    const { id, ...rest } = active;
+    localStorage.setItem(HOSTEL_KEY, JSON.stringify(normalizeHostel(rest)));
+  }
+  window.dispatchEvent(new Event("hostelzim:hostel-updated"));
+}
+
+export function loadHostels() {
+  try {
+    const saved = localStorage.getItem(HOSTELS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length) {
+        return parsed.map((h) => ({
+          id: h.id || uid("hst"),
+          ...normalizeHostel(h),
+        }));
+      }
+    }
+  } catch (e) {
+    // lista corrompida: recria a partir do hostel atual
+  }
+  const legacy = normalizeHostel(readJSON(HOSTEL_KEY, INITIAL_HOSTEL));
+  const seeded = { id: "hst-seed", ...legacy };
+  persistHostels([seeded], seeded.id);
+  return [seeded];
+}
+
+export function getActiveHostelId() {
+  const list = loadHostels();
+  const saved = localStorage.getItem(ACTIVE_HOSTEL_KEY);
+  if (saved && list.some((h) => h.id === saved)) return saved;
+  return list[0]?.id || "";
+}
+
 export function loadHostel() {
-  const saved = readJSON(HOSTEL_KEY, INITIAL_HOSTEL);
-  return {
-    ...INITIAL_HOSTEL,
-    ...saved,
-    amenities: {
-      ...INITIAL_HOSTEL.amenities,
-      ...(saved.amenities || {}),
-    },
-    photos: Array.isArray(saved.photos) ? saved.photos : [],
-  };
+  const list = loadHostels();
+  const id = getActiveHostelId();
+  const found = list.find((h) => h.id === id) || list[0] || INITIAL_HOSTEL;
+  return { id: found.id, ...normalizeHostel(found) };
 }
 
 export function saveHostel(data) {
-  localStorage.setItem(HOSTEL_KEY, JSON.stringify(data));
-  window.dispatchEvent(new Event("hostelzim:hostel-updated"));
-  return data;
+  const list = loadHostels();
+  const id = data.id || getActiveHostelId();
+  const next = list.map((h) =>
+    h.id === id ? { id, ...normalizeHostel(data) } : h
+  );
+  persistHostels(next, id);
+  return loadHostel();
+}
+
+export function getHostelLimit() {
+  return getPlan(loadAccount().planId).maxHostels;
+}
+
+export function canAddHostel() {
+  const max = getHostelLimit();
+  return loadHostels().length < max;
+}
+
+export function addHostel(data) {
+  if (!canAddHostel()) return { ok: false, hostel: loadHostel() };
+  const created = { id: uid("hst"), ...normalizeHostel(data) };
+  persistHostels([...loadHostels(), created], created.id);
+  return { ok: true, hostel: created };
+}
+
+export function setActiveHostel(id) {
+  const list = loadHostels();
+  if (!list.some((h) => h.id === id)) return loadHostel();
+  persistHostels(list, id);
+  return loadHostel();
+}
+
+export function createAccountWithHostel({ planId, hostel }) {
+  saveAccount({ planId: getPlan(planId).id });
+  const created = { id: uid("hst"), ...normalizeHostel(hostel) };
+  persistHostels([created], created.id);
+  return created;
 }
 
 // ----- Armários -----
@@ -486,6 +612,8 @@ export const STORAGE_KEYS = {
   CLIENTS_KEY,
   ROOMS_KEY,
   HOSTEL_KEY,
+  HOSTELS_KEY,
+  ACCOUNT_KEY,
   LOCKERS_KEY,
   RENTALS_KEY,
 };

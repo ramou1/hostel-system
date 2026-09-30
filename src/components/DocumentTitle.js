@@ -21,7 +21,9 @@ function DocumentTitle() {
 
     const key = pathname.startsWith("/cadastro/")
       ? "seo.registerTitle"
-      : ROUTE_TITLES[pathname] || "seo.defaultTitle";
+      : pathname.startsWith("/cadastro-hostel") || pathname === "/app/hostel/novo"
+        ? "seo.registerHostelTitle"
+        : ROUTE_TITLES[pathname] || "seo.defaultTitle";
     document.title = t(key);
 
     const description = t(

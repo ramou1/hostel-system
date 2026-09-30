@@ -30,6 +30,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 import BrandLogo from "../components/BrandLogo";
+import { PLAN_IDS, canAddHostel } from "../data/store";
 
 const FEATURE_ICONS = [FiHome, FiUsers, FiBarChart2, FiGlobe];
 
@@ -242,7 +243,13 @@ function Landing() {
                       </List>
                       <Button
                         as={RouterLink}
-                        to="/login"
+                        to={
+                          isAuthenticated
+                            ? canAddHostel()
+                              ? "/app/hostel/novo"
+                              : "/app"
+                            : `/cadastro-hostel?plan=${PLAN_IDS[i]}`
+                        }
                         colorScheme="brand"
                         variant={highlighted ? "solid" : "outline"}
                         w="100%"

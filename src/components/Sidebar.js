@@ -8,13 +8,24 @@ import {
   Image,
   Avatar,
   Tooltip,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  IconButton,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { NavLink } from "react-router-dom";
-import { FiHome, FiUsers, FiKey, FiShoppingBag } from "react-icons/fi";
+import { NavLink, Link as RouterLink } from "react-router-dom";
+import { FiHome, FiUsers, FiKey, FiShoppingBag, FiChevronDown, FiPlus } from "react-icons/fi";
 import { useI18n } from "../contexts/LanguageContext";
 import BrandLogo from "./BrandLogo";
-import { loadHostel } from "../data/store";
+import {
+  loadHostel,
+  loadHostels,
+  setActiveHostel,
+  canAddHostel,
+} from "../data/store";
 
 function NavItem({ to, icon, label, collapsed, end, onNavigate }) {
   const activeBg = useColorModeValue("brand.500", "brand.500");
@@ -74,12 +85,24 @@ function Sidebar({ collapsed = false, onNavigate }) {
   const tenantBg = useColorModeValue("gray.50", "whiteAlpha.100");
 
   const [hostel, setHostel] = useState(loadHostel);
+  const [hostels, setHostels] = useState(loadHostels);
+  const [allowAdd, setAllowAdd] = useState(canAddHostel);
   const currentHostel = hostel?.name || "Hostel";
 
   useEffect(() => {
-    const refresh = () => setHostel(loadHostel());
+    const refresh = () => {
+      setHostel(loadHostel());
+      setHostels(loadHostels());
+      setAllowAdd(canAddHostel());
+    };
     const onStorage = (e) => {
-      if (e.key === "hostelzim:hostel") refresh();
+      if (
+        e.key === "hostelzim:hostel" ||
+        e.key === "hostelzim:hostels" ||
+        e.key === "hostelzim:activeHostelId"
+      ) {
+        refresh();
+      }
     };
     window.addEventListener("hostelzim:hostel-updated", refresh);
     window.addEventListener("storage", onStorage);
@@ -88,6 +111,12 @@ function Sidebar({ collapsed = false, onNavigate }) {
       window.removeEventListener("storage", onStorage);
     };
   }, []);
+
+  const switchHostel = (id) => {
+    setHostel(setActiveHostel(id));
+    setHostels(loadHostels());
+    if (onNavigate) onNavigate();
+  };
 
   const items = [
     { to: "/app", icon: FiHome, label: t("nav.dashboard"), end: true },
@@ -147,32 +176,72 @@ function Sidebar({ collapsed = false, onNavigate }) {
         </Tooltip>
       ) : (
         <Flex
-          as={NavLink}
-          to="/app/hostel"
-          onClick={onNavigate}
           align="center"
-          gap={2.5}
+          gap={1}
           bg={tenantBg}
           borderRadius="12px"
           p={2.5}
           mb={6}
-          _hover={{ textDecoration: "none", opacity: 0.9 }}
         >
-          <Avatar size="sm" name={currentHostel} bg="brand.500" color="white" />
-          <Box lineHeight="1.2" overflow="hidden">
-            <Text
-              fontSize="10px"
-              color="gray.500"
-              textTransform="uppercase"
-              letterSpacing="wider"
-              fontWeight={700}
-            >
-              Hostel
-            </Text>
-            <Text fontSize="sm" fontWeight={700} color={brandText} noOfLines={1}>
-              {currentHostel}
-            </Text>
-          </Box>
+          <Flex
+            as={NavLink}
+            to="/app/hostel"
+            onClick={onNavigate}
+            align="center"
+            gap={2.5}
+            flex="1"
+            minW={0}
+            _hover={{ textDecoration: "none", opacity: 0.9 }}
+          >
+            <Avatar size="sm" name={currentHostel} bg="brand.500" color="white" />
+            <Box lineHeight="1.2" overflow="hidden">
+              <Text
+                fontSize="10px"
+                color="gray.500"
+                textTransform="uppercase"
+                letterSpacing="wider"
+                fontWeight={700}
+              >
+                Hostel
+              </Text>
+              <Text fontSize="sm" fontWeight={700} color={brandText} noOfLines={1}>
+                {currentHostel}
+              </Text>
+            </Box>
+          </Flex>
+          <Menu placement="bottom-end">
+            <MenuButton
+              as={IconButton}
+              aria-label={t("registerHostel.switchHostel")}
+              icon={<FiChevronDown />}
+              size="sm"
+              variant="ghost"
+            />
+            <MenuList>
+              {hostels.map((item) => (
+                <MenuItem
+                  key={item.id}
+                  onClick={() => switchHostel(item.id)}
+                  fontWeight={item.id === hostel.id ? 700 : 400}
+                >
+                  {item.name || t("nav.hostel")}
+                </MenuItem>
+              ))}
+              {allowAdd && (
+                <>
+                  <MenuDivider />
+                  <MenuItem
+                    as={RouterLink}
+                    to="/app/hostel/novo"
+                    icon={<FiPlus />}
+                    onClick={onNavigate}
+                  >
+                    {t("registerHostel.addNew")}
+                  </MenuItem>
+                </>
+              )}
+            </MenuList>
+          </Menu>
         </Flex>
       )}
 

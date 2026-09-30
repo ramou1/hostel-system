@@ -17,6 +17,7 @@ import Rooms from "./pages/Rooms";
 import Hostel from "./pages/Hostel";
 import Rentals from "./pages/Rentals";
 import SelfRegister from "./pages/SelfRegister";
+import HostelRegister from "./pages/HostelRegister";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Header from "./components/Header";
@@ -156,6 +157,7 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/cadastro-hostel" element={<HostelRegister />} />
           <Route path="/cadastro/:token" element={<SelfRegister />} />
         </Route>
 
@@ -170,6 +172,7 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="hostel" element={<Hostel />} />
+          <Route path="hostel/novo" element={<HostelRegister variant="app" />} />
           <Route path="clients" element={<Clients />} />
           <Route path="rooms" element={<Rooms />} />
           <Route path="rentals" element={<Rentals />} />

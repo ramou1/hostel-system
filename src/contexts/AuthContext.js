@@ -20,6 +20,13 @@ function loadAuth() {
   }
 }
 
+function persistSession(data, keepConnected) {
+  const primary = keepConnected ? localStorage : sessionStorage;
+  const secondary = keepConnected ? sessionStorage : localStorage;
+  primary.setItem(AUTH_KEY, JSON.stringify(data));
+  secondary.removeItem(AUTH_KEY);
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadAuth);
 
@@ -33,11 +40,14 @@ export function AuthProvider({ children }) {
     const data = { email: DEMO_CREDENTIALS.email };
     // "Manter conectado" => persiste entre sessões (localStorage);
     // caso contrário, apenas na sessão atual (sessionStorage).
-    const primary = keepConnected ? localStorage : sessionStorage;
-    const secondary = keepConnected ? sessionStorage : localStorage;
-    primary.setItem(AUTH_KEY, JSON.stringify(data));
-    secondary.removeItem(AUTH_KEY);
+    persistSession(data, keepConnected);
+    setUser(data);
+    return { ok: true };
+  }, []);
 
+  const signup = useCallback((email, keepConnected = true) => {
+    const data = { email: (email || "").trim().toLowerCase() };
+    persistSession(data, keepConnected);
     setUser(data);
     return { ok: true };
   }, []);
@@ -50,7 +60,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout }}
+      value={{ user, isAuthenticated: !!user, login, signup, logout }}
     >
       {children}
     </AuthContext.Provider>
