@@ -17,7 +17,8 @@ function DocumentTitle() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
+    document.documentElement.lang =
+      lang === "pt" ? "pt-BR" : lang === "es" ? "es" : "en";
 
     const key = pathname.startsWith("/cadastro/")
       ? "seo.registerTitle"

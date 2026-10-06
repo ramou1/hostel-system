@@ -29,7 +29,8 @@ export function LanguageProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, lang);
-    document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
+    document.documentElement.lang =
+      lang === "pt" ? "pt-BR" : lang === "es" ? "es" : "en";
   }, [lang]);
 
   const setLang = useCallback((newLang) => {

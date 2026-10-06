@@ -130,6 +130,26 @@ function ClientDetailsModal({ isOpen, onClose, client, footer }) {
               </InfoField>
               <InfoField label={t("clients.room")}>
                 {client.room || "—"}
+                {client.bed
+                  ? ` · ${t("clients.bedNumber").replace("{n}", client.bed)}`
+                  : ""}
+              </InfoField>
+              <InfoField label={t("clients.birthDate")}>
+                {client.birthDate || "—"}
+              </InfoField>
+              <InfoField label={t("clients.nationality")}>
+                {client.nationality || "—"}
+              </InfoField>
+              <InfoField label={t("clients.originCity")}>
+                {client.originCity || "—"}
+              </InfoField>
+              <InfoField label={t("clients.destinationCity")}>
+                {client.destinationCity || "—"}
+              </InfoField>
+              <InfoField label={t("clients.travelReason")}>
+                {client.travelReason
+                  ? t(`clients.travelReasons.${client.travelReason}`)
+                  : "—"}
               </InfoField>
               <InfoField label={t("clients.locker")}>
                 {getClientLocker(client) || "—"}

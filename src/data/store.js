@@ -208,6 +208,31 @@ export function loadClients() {
   return readJSON(CLIENTS_KEY, INITIAL_CLIENTS);
 }
 
+/** Camas livres de um quarto: 1..capacidade, descontando hóspedes ainda hospedados. */
+export function getFreeBeds(roomName) {
+  const room = loadRooms().find((r) => r.name === roomName);
+  if (!room) return [];
+  const capacity = Number(room.capacity) || 0;
+  const staying = loadClients().filter(
+    (c) => c.room === roomName && c.status !== "checkedOut"
+  );
+  const taken = new Set(
+    staying.map((c) => (c.bed ? String(c.bed) : "")).filter(Boolean)
+  );
+  let unnamed = staying.filter((c) => !c.bed).length;
+  for (let i = 1; i <= capacity && unnamed > 0; i += 1) {
+    if (!taken.has(String(i))) {
+      taken.add(String(i));
+      unnamed -= 1;
+    }
+  }
+  const free = [];
+  for (let i = 1; i <= capacity; i += 1) {
+    if (!taken.has(String(i))) free.push(String(i));
+  }
+  return free;
+}
+
 export function saveClients(list) {
   localStorage.setItem(CLIENTS_KEY, JSON.stringify(list));
 }

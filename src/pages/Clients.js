@@ -20,6 +20,7 @@ import {
   ModalBody,
   ModalFooter,
   Flex,
+  Box,
   Card,
   CardBody,
   Avatar,
@@ -67,10 +68,16 @@ const EMPTY_CLIENT = {
   email: "",
   phone: "",
   room: "",
+  bed: "",
   cpf: "",
   documentId: "",
   photo: "",
   country: "",
+  nationality: "",
+  birthDate: "",
+  originCity: "",
+  destinationCity: "",
+  travelReason: "",
   languages: ["pt"],
   locker: "",
 };
@@ -509,6 +516,19 @@ function Clients() {
             <Text fontSize="sm" color="gray.500" mb={4}>
               {t("clients.linkDesc")}
             </Text>
+            <Flex justify="center" mb={4}>
+              <Box textAlign="center">
+                <Box
+                  as="img"
+                  src="/images/qr-code.jpg"
+                  alt={t("clients.linkTitle")}
+                  boxSize="160px"
+                  mx="auto"
+                  objectFit="contain"
+                  borderRadius="12px"
+                />
+              </Box>
+            </Flex>
             <InputGroup>
               <Input value={generatedLink} isReadOnly pr="4.5rem" fontSize="sm" />
             </InputGroup>

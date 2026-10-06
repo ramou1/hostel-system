@@ -13,14 +13,27 @@ import {
 } from "@chakra-ui/react";
 import { useI18n } from "../contexts/LanguageContext";
 import PhotoUpload from "./PhotoUpload";
-import { LANGUAGE_OPTIONS } from "../data/store";
+import { LANGUAGE_OPTIONS, getFreeBeds } from "../data/store";
 
 // Campos compartilhados entre o cadastro no balcão e o auto-cadastro (link).
 // País e armário são texto livre; idiomas permitem múltipla escolha.
 function ClientFormFields({ values, setField, rooms = [] }) {
   const { t } = useI18n();
 
-  const handle = (e) => setField(e.target.name, e.target.value);
+  const freeBeds = values.room ? getFreeBeds(values.room) : [];
+  const bedOptions =
+    values.bed && !freeBeds.includes(String(values.bed))
+      ? [String(values.bed), ...freeBeds]
+      : freeBeds;
+
+  const handle = (e) => {
+    if (e.target.name === "room") {
+      setField("room", e.target.value);
+      setField("bed", "");
+      return;
+    }
+    setField(e.target.name, e.target.value);
+  };
 
   const selectedLanguages = Array.isArray(values.languages)
     ? values.languages
@@ -86,6 +99,32 @@ function ClientFormFields({ values, setField, rooms = [] }) {
             {rooms.map((room) => (
               <option key={room.name} value={room.name}>
                 {room.name}
+                {room.category === "dorm"
+                  ? ` · ${t(`rooms.types.${room.type}`)}`
+                  : ""}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize="sm">{t("clients.bed")}</FormLabel>
+          <Select
+            name="bed"
+            placeholder={
+              values.room
+                ? bedOptions.length
+                  ? t("clients.selectBed")
+                  : t("clients.noBeds")
+                : t("clients.selectRoomFirst")
+            }
+            value={values.bed || ""}
+            onChange={handle}
+            isDisabled={!values.room || bedOptions.length === 0}
+          >
+            {bedOptions.map((bed) => (
+              <option key={bed} value={bed}>
+                {t("clients.bedNumber").replace("{n}", bed)}
               </option>
             ))}
           </Select>
@@ -135,6 +174,67 @@ function ClientFormFields({ values, setField, rooms = [] }) {
             value={values.country || ""}
             onChange={handle}
           />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize="sm">{t("clients.birthDate")}</FormLabel>
+          <Input
+            name="birthDate"
+            type="date"
+            value={values.birthDate || ""}
+            onChange={handle}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize="sm">{t("clients.nationality")}</FormLabel>
+          <Input
+            name="nationality"
+            placeholder={t("clients.nationalityPlaceholder")}
+            value={values.nationality || ""}
+            onChange={handle}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize="sm">
+            {t("clients.originCity")} {t("clients.optionalTag")}
+          </FormLabel>
+          <Input
+            name="originCity"
+            placeholder={t("clients.originCity")}
+            value={values.originCity || ""}
+            onChange={handle}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize="sm">
+            {t("clients.destinationCity")} {t("clients.optionalTag")}
+          </FormLabel>
+          <Input
+            name="destinationCity"
+            placeholder={t("clients.destinationCity")}
+            value={values.destinationCity || ""}
+            onChange={handle}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize="sm">
+            {t("clients.travelReason")} {t("clients.optionalTag")}
+          </FormLabel>
+          <Select
+            name="travelReason"
+            placeholder={t("clients.travelReasonPlaceholder")}
+            value={values.travelReason || ""}
+            onChange={handle}
+          >
+            <option value="tourism">{t("clients.travelReasons.tourism")}</option>
+            <option value="work">{t("clients.travelReasons.work")}</option>
+            <option value="study">{t("clients.travelReasons.study")}</option>
+            <option value="other">{t("clients.travelReasons.other")}</option>
+          </Select>
         </FormControl>
       </SimpleGrid>
 
