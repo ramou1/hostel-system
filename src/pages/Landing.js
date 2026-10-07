@@ -17,6 +17,7 @@ import {
   List,
   ListItem,
   ListIcon,
+  Image,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -33,6 +34,12 @@ import BrandLogo from "../components/BrandLogo";
 import { PLAN_IDS, canAddHostel } from "../data/store";
 
 const FEATURE_ICONS = [FiHome, FiUsers, FiBarChart2, FiGlobe];
+
+const LANGS = [
+  { id: "pt", label: "Português" },
+  { id: "en", label: "English" },
+  { id: "es", label: "Español" },
+];
 
 function Brand() {
   return <BrandLogo height="30px" forceLight />;
@@ -75,13 +82,32 @@ function Landing() {
           <Flex align="center" justify="space-between" h="64px">
             <Brand />
             <HStack spacing={2}>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setLang(lang === "pt" ? "en" : "pt")}
-              >
-                {lang === "pt" ? "EN" : "PT"}
-              </Button>
+              <HStack spacing={1}>
+                {LANGS.map((item) => (
+                  <Box
+                    as="button"
+                    key={item.id}
+                    type="button"
+                    aria-label={item.label}
+                    onClick={() => setLang(item.id)}
+                    boxSize="28px"
+                    borderRadius="full"
+                    overflow="hidden"
+                    border="2px solid"
+                    borderColor={lang === item.id ? "brand.500" : "transparent"}
+                    p={0}
+                    lineHeight={0}
+                  >
+                    <Image
+                      src={`/images/flags/${item.id}.png`}
+                      alt=""
+                      boxSize="24px"
+                      objectFit="cover"
+                      borderRadius="full"
+                    />
+                  </Box>
+                ))}
+              </HStack>
               <Button
                 as={RouterLink}
                 to={isAuthenticated ? "/app" : "/login"}

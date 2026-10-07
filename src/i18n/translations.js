@@ -27,7 +27,7 @@ export const translations = {
         "Hostely é a plataforma para gerenciar quartos, hóspedes e reservas de um ou vários hostels.",
       homeTitle: "Hostely | Plataforma de gerenciamento de hostels",
       homeDescription:
-        "Gerencie quartos, hóspedes e reservas de um ou vários hostels em um só lugar. Auto-cadastro por link, painel de ocupação e suporte a português e inglês.",
+        "Gerencie quartos, hóspedes e reservas de um ou vários hostels em um só lugar. Auto-cadastro por link, painel de ocupação e suporte a português, inglês e espanhol.",
       loginTitle: "Entrar | Hostely",
       dashboardTitle: "Painel | Hostely",
       hostelTitle: "Hostel | Hostely",
@@ -346,7 +346,7 @@ export const translations = {
           },
           {
             title: "Multi-hostel e multi-idioma",
-            text: "Escale para várias unidades e atenda em português e inglês.",
+            text: "Escale para várias unidades e atenda em português, inglês e espanhol.",
           },
         ],
       },
@@ -451,7 +451,7 @@ export const translations = {
         "Hostely is the platform to manage rooms, guests and bookings for one or many hostels.",
       homeTitle: "Hostely | Hostel management platform",
       homeDescription:
-        "Manage rooms, guests and bookings for one or many hostels in a single place. Guest self-registration by link, occupancy dashboard, and Portuguese/English support.",
+        "Manage rooms, guests and bookings for one or many hostels in a single place. Guest self-registration by link, occupancy dashboard, and Portuguese, English and Spanish support.",
       loginTitle: "Sign in | Hostely",
       dashboardTitle: "Dashboard | Hostely",
       hostelTitle: "Hostel | Hostely",
@@ -770,7 +770,7 @@ export const translations = {
           },
           {
             title: "Multi-hostel & multi-language",
-            text: "Scale to multiple units and serve in Portuguese and English.",
+            text: "Scale to multiple units and serve in Portuguese, English and Spanish.",
           },
         ],
       },
@@ -851,6 +851,11 @@ export const translations = {
     common: {
       optional: "opcional",
     },
+    seo: {
+      homeTitle: "Hostely | Plataforma de gestión de hostels",
+      homeDescription:
+        "Gestiona habitaciones, huéspedes y reservas de uno o varios hostels en un solo lugar. Auto-registro por enlace y soporte en portugués, inglés y español.",
+    },
     clients: {
       name: "Nombre",
       email: "Correo",
@@ -920,6 +925,79 @@ export const translations = {
       successDesc:
         "Tus datos fueron enviados. Esta pantalla vuelve al inicio para el siguiente huésped.",
       footer: "Hostely · Registro seguro",
+    },
+    landing: {
+      signIn: "Entrar",
+      goToApp: "Ir al panel",
+      hero: {
+        badge: "Plataforma para redes de hostels",
+        title: "Gestiona todos tus hostels en un solo lugar",
+        subtitle:
+          "Reservas, habitaciones, huéspedes y facturación — todo integrado, en cualquier idioma, con auto-registro de huéspedes por enlace.",
+        ctaPrimary: "Empezar ahora",
+        ctaSecondary: "Ver planes",
+      },
+      features: {
+        title: "Todo lo que tu hostel necesita",
+        subtitle: "Herramientas simples y potentes para el día a día.",
+        items: [
+          {
+            title: "Gestión de habitaciones",
+            text: "Controla capacidad, ocupación y tipos de habitación en tiempo real.",
+          },
+          {
+            title: "Huéspedes y auto-registro",
+            text: "Envía un enlace y deja que el huésped complete sus datos.",
+          },
+          {
+            title: "Panel e indicadores",
+            text: "Ingresos, ocupación y evaluaciones de un vistazo.",
+          },
+          {
+            title: "Multi-hostel y multi-idioma",
+            text: "Escala a varias unidades y atiende en portugués, inglés y español.",
+          },
+        ],
+      },
+      pricing: {
+        title: "Planes para cada tamaño de operación",
+        subtitle: "Empieza gratis y crece junto con tu red.",
+        perMonth: "/mes",
+        mostPopular: "Más popular",
+        cta: "Suscribirse",
+        plans: [
+          {
+            name: "Básico",
+            price: "R$ 0",
+            desc: "Para empezar",
+            features: ["1 hostel", "Hasta 30 habitaciones", "Registro de huéspedes", "Soporte por correo"],
+          },
+          {
+            name: "Pro",
+            price: "R$ 149",
+            desc: "Para hostels en crecimiento",
+            features: [
+              "Hasta 5 hostels",
+              "Habitaciones ilimitadas",
+              "Auto-registro por enlace",
+              "Informes avanzados",
+              "Soporte prioritario",
+            ],
+          },
+          {
+            name: "Enterprise",
+            price: "A consultar",
+            desc: "Para redes",
+            features: [
+              "Hostels ilimitados",
+              "Multiusuario",
+              "Integraciones",
+              "Gerente de cuentas dedicado",
+            ],
+          },
+        ],
+      },
+      footer: "Hecho para quien vive de la hospitalidad.",
     },
   },
 };
