@@ -24,11 +24,12 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiBell, FiSettings, FiLogOut, FiMenu } from "react-icons/fi";
+import { FiBell, FiSettings, FiLogOut, FiMenu, FiHelpCircle } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useI18n } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 import SettingsModal from "./SettingsModal";
+import HelpModal from "./HelpModal";
 
 const TITLE_MAP = {
   "/app": "nav.dashboard",
@@ -67,6 +68,7 @@ function Header({ onOpenMenu, profile, onSaveProfile }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const settings = useDisclosure();
+  const help = useDisclosure();
 
   const handleLogout = () => {
     logout();
@@ -181,6 +183,9 @@ function Header({ onOpenMenu, profile, onSaveProfile }) {
               <MenuItem icon={<FiSettings />} onClick={settings.onOpen}>
                 {t("header.profile.settings")}
               </MenuItem>
+              <MenuItem icon={<FiHelpCircle />} onClick={help.onOpen}>
+                {t("header.profile.help")}
+              </MenuItem>
               <MenuItem icon={<FiLogOut />} color="red.400" onClick={handleLogout}>
                 {t("header.profile.logout")}
               </MenuItem>
@@ -195,6 +200,7 @@ function Header({ onOpenMenu, profile, onSaveProfile }) {
         profile={profile}
         onSave={onSaveProfile}
       />
+      <HelpModal isOpen={help.isOpen} onClose={help.onClose} profile={profile} />
     </>
   );
 }

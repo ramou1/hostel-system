@@ -10,6 +10,7 @@ const ACTIVE_HOSTEL_KEY = "hostelzim:activeHostelId";
 const ACCOUNT_KEY = "hostelzim:account";
 const LOCKERS_KEY = "hostelzim:lockers";
 const RENTALS_KEY = "hostelzim:rentals";
+const SUGGESTIONS_KEY = "hostelzim:suggestions";
 
 // Origem do cadastro (enum)
 export const SOURCE = { LINK: "link", DESK: "desk" };
@@ -627,6 +628,32 @@ export function markRentalReturned(id) {
   return list;
 }
 
+export function loadSuggestions() {
+  try {
+    const raw = localStorage.getItem(SUGGESTIONS_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+export function addSuggestion({ message, name, email }) {
+  const list = loadSuggestions();
+  const next = [
+    {
+      id: uid("sg"),
+      message: String(message || "").trim(),
+      name: name || "",
+      email: email || "",
+      createdAt: new Date().toISOString(),
+    },
+    ...list,
+  ];
+  localStorage.setItem(SUGGESTIONS_KEY, JSON.stringify(next));
+  return next[0];
+}
+
 export function removeRental(id) {
   const list = loadRentals().filter((r) => r.id !== id);
   saveRentals(list);
@@ -641,4 +668,5 @@ export const STORAGE_KEYS = {
   ACCOUNT_KEY,
   LOCKERS_KEY,
   RENTALS_KEY,
+  SUGGESTIONS_KEY,
 };

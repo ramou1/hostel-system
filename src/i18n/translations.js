@@ -278,6 +278,7 @@ export const translations = {
       },
       profile: {
         settings: "Configurações",
+        help: "Ajuda",
         logout: "Sair",
       },
     },
@@ -299,6 +300,16 @@ export const translations = {
       account: "Conta",
       notifications: "Notificações por e-mail",
       notificationsDisabled: "Indisponível no momento",
+    },
+    help: {
+      title: "Ajuda",
+      subtitle: "Conte o que podemos melhorar no sistema.",
+      message: "Sugestão",
+      placeholder: "Descreva a melhoria que você gostaria de ver.",
+      submit: "Enviar sugestão",
+      required: "Escreva a sugestão antes de enviar.",
+      successTitle: "Sugestão enviada",
+      successDesc: "Obrigado. Vamos usar isso para melhorar o Hostely.",
     },
     selfRegister: {
       title: "Cadastro de hóspede",
@@ -702,6 +713,7 @@ export const translations = {
       },
       profile: {
         settings: "Settings",
+        help: "Help",
         logout: "Log out",
       },
     },
@@ -723,6 +735,16 @@ export const translations = {
       account: "Account",
       notifications: "Email notifications",
       notificationsDisabled: "Unavailable at the moment",
+    },
+    help: {
+      title: "Help",
+      subtitle: "Tell us what we can improve in the system.",
+      message: "Suggestion",
+      placeholder: "Describe the improvement you would like to see.",
+      submit: "Send suggestion",
+      required: "Write a suggestion before sending.",
+      successTitle: "Suggestion sent",
+      successDesc: "Thank you. We will use this to improve Hostely.",
     },
     selfRegister: {
       title: "Guest registration",
@@ -855,6 +877,21 @@ export const translations = {
       homeTitle: "Hostely | Plataforma de gestión de hostels",
       homeDescription:
         "Gestiona habitaciones, huéspedes y reservas de uno o varios hostels en un solo lugar. Auto-registro por enlace y soporte en portugués, inglés y español.",
+    },
+    header: {
+      profile: {
+        help: "Ayuda",
+      },
+    },
+    help: {
+      title: "Ayuda",
+      subtitle: "Cuéntanos qué podemos mejorar en el sistema.",
+      message: "Sugerencia",
+      placeholder: "Describe la mejora que te gustaría ver.",
+      submit: "Enviar sugerencia",
+      required: "Escribe la sugerencia antes de enviar.",
+      successTitle: "Sugerencia enviada",
+      successDesc: "Gracias. Vamos a usar esto para mejorar Hostely.",
     },
     clients: {
       name: "Nombre",
