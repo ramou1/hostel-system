@@ -33,19 +33,74 @@ export const ROOM_CATEGORIES = ["private", "dorm"];
 export const BED_TYPES = ["single", "double", "queen", "bunk"];
 export const BATHROOM_TYPES = ["private", "shared"];
 
+function sanitizeBedGroups(groups) {
+  if (!Array.isArray(groups)) return [];
+  const order = [];
+  const qty = {};
+  groups.forEach((group) => {
+    const type = BED_TYPES.includes(group?.type) ? group.type : null;
+    const quantity = Math.max(0, Math.floor(Number(group?.quantity) || 0));
+    if (!type || quantity < 1) return;
+    if (!qty[type]) {
+      qty[type] = 0;
+      order.push(type);
+    }
+    qty[type] += quantity;
+  });
+  return order.map((type) => ({ type, quantity: qty[type] }));
+}
+
+/** Grupos de camas do quarto. Quartos antigos viram um grupo a partir do tipo e da capacidade. */
+export function roomBeds(room = {}) {
+  const fromGroups = sanitizeBedGroups(room.beds);
+  if (fromGroups.length) return fromGroups;
+  const capacity = Math.max(0, Math.floor(Number(room.capacity) || 0));
+  if (!capacity) return [];
+  const type = BED_TYPES.includes(room.bedType) ? room.bedType : "single";
+  return [{ type, quantity: capacity }];
+}
+
+/** Cada cama vira um lugar identificável, como beliche-1 ou casal-2. */
+export function expandRoomBeds(room = {}) {
+  const slots = [];
+  roomBeds(room).forEach((group) => {
+    for (let number = 1; number <= group.quantity; number += 1) {
+      slots.push({ id: `${group.type}-${number}`, type: group.type, number });
+    }
+  });
+  return slots;
+}
+
+export function findBedSlot(room, bedId) {
+  if (!room || bedId == null || bedId === "") return null;
+  const slots = expandRoomBeds(room);
+  const id = String(bedId);
+  const byId = slots.find((slot) => slot.id === id);
+  if (byId) return byId;
+  const index = Number(id);
+  if (Number.isInteger(index) && index >= 1 && index <= slots.length) {
+    return slots[index - 1];
+  }
+  return null;
+}
+
 export function normalizeRoom(room = {}) {
   const category = room.category === "private" ? "private" : "dorm";
+  const beds = roomBeds(room);
+  const capacity = beds.reduce((sum, group) => sum + group.quantity, 0);
+  const clients = Number(room.clients) || 0;
   return {
     name: room.name || "",
     category,
-    capacity: Number(room.capacity) || 0,
-    clients: Number(room.clients) || 0,
+    capacity,
+    clients,
     availableSpaces:
       room.availableSpaces != null
         ? Number(room.availableSpaces)
-        : Math.max(0, (Number(room.capacity) || 0) - (Number(room.clients) || 0)),
+        : Math.max(0, capacity - clients),
     type: category === "dorm" ? room.type || "mixed" : room.type || "mixed",
-    bedType: room.bedType || (category === "private" ? "double" : "bunk"),
+    beds,
+    bedType: beds[0]?.type || room.bedType || (category === "private" ? "double" : "bunk"),
     bathroom: room.bathroom || (category === "private" ? "private" : "shared"),
   };
 }
@@ -209,29 +264,26 @@ export function loadClients() {
   return readJSON(CLIENTS_KEY, INITIAL_CLIENTS);
 }
 
-/** Camas livres de um quarto: 1..capacidade, descontando hóspedes ainda hospedados. */
+/** Camas livres de um quarto, já separadas por tipo e número. */
 export function getFreeBeds(roomName) {
   const room = loadRooms().find((r) => r.name === roomName);
   if (!room) return [];
-  const capacity = Number(room.capacity) || 0;
+  const slots = expandRoomBeds(room);
   const staying = loadClients().filter(
     (c) => c.room === roomName && c.status !== "checkedOut"
   );
-  const taken = new Set(
-    staying.map((c) => (c.bed ? String(c.bed) : "")).filter(Boolean)
-  );
-  let unnamed = staying.filter((c) => !c.bed).length;
-  for (let i = 1; i <= capacity && unnamed > 0; i += 1) {
-    if (!taken.has(String(i))) {
-      taken.add(String(i));
-      unnamed -= 1;
-    }
-  }
-  const free = [];
-  for (let i = 1; i <= capacity; i += 1) {
-    if (!taken.has(String(i))) free.push(String(i));
-  }
-  return free;
+  const taken = new Set();
+  staying.forEach((client) => {
+    const slot = findBedSlot(room, client.bed);
+    if (slot) taken.add(slot.id);
+  });
+  let unnamed = staying.filter((client) => !findBedSlot(room, client.bed)).length;
+  slots.forEach((slot) => {
+    if (unnamed <= 0 || taken.has(slot.id)) return;
+    taken.add(slot.id);
+    unnamed -= 1;
+  });
+  return slots.filter((slot) => !taken.has(slot.id));
 }
 
 export function saveClients(list) {

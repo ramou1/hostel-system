@@ -20,8 +20,10 @@ import {
 import { FiLink, FiUserCheck } from "react-icons/fi";
 import { useI18n } from "../contexts/LanguageContext";
 import {
+  findBedSlot,
   getClientLanguages,
   getClientLocker,
+  loadRooms,
   SOURCE,
 } from "../data/store";
 
@@ -84,6 +86,16 @@ function ClientDetailsModal({ isOpen, onClose, client, footer }) {
     return codes.map((code) => t(`clients.languages.${code}`)).join(", ");
   };
 
+  const bedLabel = () => {
+    if (!client?.bed) return "";
+    const room = loadRooms().find((item) => item.name === client.room);
+    const slot = room ? findBedSlot(room, client.bed) : null;
+    if (!slot) return t("clients.bedNumber").replace("{n}", client.bed);
+    return t("clients.bedOption")
+      .replace("{type}", t(`rooms.bedTypes.${slot.type}`))
+      .replace("{n}", slot.number);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
       <ModalOverlay backdropFilter="blur(4px)" />
@@ -130,9 +142,7 @@ function ClientDetailsModal({ isOpen, onClose, client, footer }) {
               </InfoField>
               <InfoField label={t("clients.room")}>
                 {client.room || "—"}
-                {client.bed
-                  ? ` · ${t("clients.bedNumber").replace("{n}", client.bed)}`
-                  : ""}
+                {client.bed ? ` · ${bedLabel()}` : ""}
               </InfoField>
               <InfoField label={t("clients.birthDate")}>
                 {client.birthDate || "—"}

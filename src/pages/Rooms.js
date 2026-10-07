@@ -8,10 +8,13 @@ import {
   Th,
   Td,
   TableContainer,
+  Box,
   Input,
   InputGroup,
   InputLeftElement,
   Flex,
+  HStack,
+  IconButton,
   useDisclosure,
   Modal,
   ModalOverlay,
@@ -29,7 +32,7 @@ import {
   Text,
   Icon,
 } from "@chakra-ui/react";
-import { FiPlus, FiSearch, FiKey } from "react-icons/fi";
+import { FiPlus, FiSearch, FiKey, FiTrash2 } from "react-icons/fi";
 import useToastService from "../services/ToastService";
 import { useI18n } from "../contexts/LanguageContext";
 import { loadRooms, saveRooms, normalizeRoom } from "../data/store";
@@ -39,11 +42,22 @@ const TYPE_COLORS = { male: "blue", female: "pink", mixed: "purple" };
 const EMPTY_ROOM = {
   name: "",
   category: "dorm",
-  capacity: "",
   type: "mixed",
-  bedType: "bunk",
   bathroom: "shared",
+  beds: [],
 };
+
+function bedSummary(room, t) {
+  const groups = Array.isArray(room.beds) ? room.beds : [];
+  if (!groups.length) return "—";
+  return groups
+    .map((group) =>
+      t("rooms.bedSummary")
+        .replace("{type}", t(`rooms.bedTypes.${group.type}`))
+        .replace("{n}", group.quantity)
+    )
+    .join(", ");
+}
 
 function Rooms() {
   const { t } = useI18n();
@@ -52,6 +66,8 @@ function Rooms() {
   const [rooms, setRooms] = useState(loadRooms);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newRoom, setNewRoom] = useState(EMPTY_ROOM);
+  const [bedType, setBedType] = useState("bunk");
+  const [bedQty, setBedQty] = useState("1");
 
   const filteredRooms = rooms.filter((room) =>
     room.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -62,16 +78,48 @@ function Rooms() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "category") {
+      setBedType(value === "private" ? "double" : "bunk");
       setNewRoom((prev) => ({
         ...prev,
         category: value,
         type: value === "dorm" ? prev.type || "mixed" : "mixed",
-        bedType: value === "private" ? "double" : "bunk",
         bathroom: value === "private" ? "private" : "shared",
       }));
       return;
     }
     setNewRoom((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const totalBeds = newRoom.beds.reduce((sum, group) => sum + group.quantity, 0);
+
+  const resetForm = () => {
+    setNewRoom(EMPTY_ROOM);
+    setBedType("bunk");
+    setBedQty("1");
+  };
+
+  const handleAddBed = () => {
+    const quantity = Math.floor(Number(bedQty));
+    if (!Number.isFinite(quantity) || quantity < 1) return;
+    setNewRoom((prev) => {
+      const exists = prev.beds.some((group) => group.type === bedType);
+      const beds = exists
+        ? prev.beds.map((group) =>
+            group.type === bedType
+              ? { ...group, quantity: group.quantity + quantity }
+              : group
+          )
+        : [...prev.beds, { type: bedType, quantity }];
+      return { ...prev, beds };
+    });
+    setBedQty("1");
+  };
+
+  const handleRemoveBed = (type) => {
+    setNewRoom((prev) => ({
+      ...prev,
+      beds: prev.beds.filter((group) => group.type !== type),
+    }));
   };
 
   const handleAddRoom = () => {
@@ -84,7 +132,7 @@ function Rooms() {
     ];
     setRooms(next);
     saveRooms(next);
-    setNewRoom(EMPTY_ROOM);
+    resetForm();
     showSuccess(t("rooms.addSuccessTitle"), t("rooms.addSuccessDesc"));
     onClose();
   };
@@ -128,7 +176,7 @@ function Rooms() {
                   <Th isNumeric>{t("rooms.capacity")}</Th>
                   <Th isNumeric>{t("rooms.clients")}</Th>
                   <Th isNumeric>{t("rooms.availableSpaces")}</Th>
-                  <Th>{t("rooms.bedType")}</Th>
+                  <Th>{t("rooms.beds")}</Th>
                   <Th>{t("rooms.bathroom")}</Th>
                   <Th>{t("rooms.type")}</Th>
                 </Tr>
@@ -149,7 +197,7 @@ function Rooms() {
                     <Td isNumeric>{room.capacity}</Td>
                     <Td isNumeric>{room.clients}</Td>
                     <Td isNumeric>{room.availableSpaces}</Td>
-                    <Td>{t(`rooms.bedTypes.${room.bedType}`)}</Td>
+                    <Td whiteSpace="normal">{bedSummary(room, t)}</Td>
                     <Td>{t(`rooms.bathrooms.${room.bathroom}`)}</Td>
                     <Td>
                       {room.category === "dorm" ? (
@@ -179,7 +227,15 @@ function Rooms() {
         </CardBody>
       </Card>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          resetForm();
+          onClose();
+        }}
+        isCentered
+        size="lg"
+      >
         <ModalOverlay backdropFilter="blur(4px)" />
         <ModalContent borderRadius="16px">
           <ModalHeader>{t("rooms.addTitle")}</ModalHeader>
@@ -206,34 +262,76 @@ function Rooms() {
               </Select>
             </FormControl>
             <FormControl mb={3} isRequired>
-              <FormLabel fontSize="sm">
-                {newRoom.category === "private"
-                  ? t("rooms.guestCapacity")
-                  : t("rooms.bedCount")}
-              </FormLabel>
-              <Input
-                type="number"
-                min={1}
-                name="capacity"
-                value={newRoom.capacity}
-                onChange={handleInputChange}
-              />
-              <Text fontSize="xs" color="gray.500" mt={1}>
-                {t("rooms.clientsAutoHint")}
-              </Text>
-            </FormControl>
-            <FormControl mb={3}>
-              <FormLabel fontSize="sm">{t("rooms.bedType")}</FormLabel>
-              <Select
-                name="bedType"
-                value={newRoom.bedType}
-                onChange={handleInputChange}
-              >
-                <option value="single">{t("rooms.bedTypes.single")}</option>
-                <option value="double">{t("rooms.bedTypes.double")}</option>
-                <option value="queen">{t("rooms.bedTypes.queen")}</option>
-                <option value="bunk">{t("rooms.bedTypes.bunk")}</option>
-              </Select>
+              <FormLabel fontSize="sm">{t("rooms.beds")}</FormLabel>
+              <HStack align="flex-end" spacing={2}>
+                <FormControl>
+                  <FormLabel fontSize="xs" color="gray.500">
+                    {t("rooms.bedType")}
+                  </FormLabel>
+                  <Select
+                    value={bedType}
+                    onChange={(e) => setBedType(e.target.value)}
+                  >
+                    <option value="single">{t("rooms.bedTypes.single")}</option>
+                    <option value="double">{t("rooms.bedTypes.double")}</option>
+                    <option value="queen">{t("rooms.bedTypes.queen")}</option>
+                    <option value="bunk">{t("rooms.bedTypes.bunk")}</option>
+                  </Select>
+                </FormControl>
+                <FormControl maxW="110px">
+                  <FormLabel fontSize="xs" color="gray.500">
+                    {t("rooms.bedQuantity")}
+                  </FormLabel>
+                  <Input
+                    type="number"
+                    min={1}
+                    value={bedQty}
+                    onChange={(e) => setBedQty(e.target.value)}
+                  />
+                </FormControl>
+                <Button
+                  leftIcon={<FiPlus />}
+                  onClick={handleAddBed}
+                  flexShrink={0}
+                  isDisabled={Math.floor(Number(bedQty)) < 1}
+                >
+                  {t("rooms.addBed")}
+                </Button>
+              </HStack>
+              {newRoom.beds.length === 0 ? (
+                <Text fontSize="xs" color="gray.500" mt={2}>
+                  {t("rooms.bedsEmpty")}
+                </Text>
+              ) : (
+                <Box mt={3}>
+                  {newRoom.beds.map((group) => (
+                    <Flex
+                      key={group.type}
+                      align="center"
+                      justify="space-between"
+                      py={1}
+                    >
+                      <Text fontSize="sm">
+                        {t("rooms.bedSummary")
+                          .replace("{type}", t(`rooms.bedTypes.${group.type}`))
+                          .replace("{n}", group.quantity)}
+                      </Text>
+                      <IconButton
+                        aria-label={t("rooms.removeBed")}
+                        icon={<FiTrash2 />}
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleRemoveBed(group.type)}
+                      />
+                    </Flex>
+                  ))}
+                  <Text fontSize="xs" color="gray.500" mt={1}>
+                    {t("rooms.bedsTotal").replace("{n}", totalBeds)}
+                    {" · "}
+                    {t("rooms.clientsAutoHint")}
+                  </Text>
+                </Box>
+              )}
             </FormControl>
             <FormControl mb={3}>
               <FormLabel fontSize="sm">{t("rooms.bathroom")}</FormLabel>
@@ -258,13 +356,19 @@ function Rooms() {
             )}
           </ModalBody>
           <ModalFooter gap={3}>
-            <Button variant="ghost" onClick={onClose}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                resetForm();
+                onClose();
+              }}
+            >
               {t("common.cancel")}
             </Button>
             <Button
               colorScheme="brand"
               onClick={handleAddRoom}
-              isDisabled={!newRoom.name.trim()}
+              isDisabled={!newRoom.name.trim() || totalBeds < 1}
             >
               {t("common.save")}
             </Button>

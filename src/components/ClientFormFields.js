@@ -13,18 +13,25 @@ import {
 } from "@chakra-ui/react";
 import { useI18n } from "../contexts/LanguageContext";
 import PhotoUpload from "./PhotoUpload";
-import { LANGUAGE_OPTIONS, getFreeBeds } from "../data/store";
+import { LANGUAGE_OPTIONS, findBedSlot, getFreeBeds } from "../data/store";
 
 // Campos compartilhados entre o cadastro no balcão e o auto-cadastro (link).
 // País e armário são texto livre; idiomas permitem múltipla escolha.
 function ClientFormFields({ values, setField, rooms = [] }) {
   const { t } = useI18n();
 
+  const room = rooms.find((item) => item.name === values.room);
   const freeBeds = values.room ? getFreeBeds(values.room) : [];
+  const currentBed = room ? findBedSlot(room, values.bed) : null;
   const bedOptions =
-    values.bed && !freeBeds.includes(String(values.bed))
-      ? [String(values.bed), ...freeBeds]
+    currentBed && !freeBeds.some((bed) => bed.id === currentBed.id)
+      ? [currentBed, ...freeBeds]
       : freeBeds;
+
+  const bedLabel = (bed) =>
+    t("clients.bedOption")
+      .replace("{type}", t(`rooms.bedTypes.${bed.type}`))
+      .replace("{n}", bed.number);
 
   const handle = (e) => {
     if (e.target.name === "room") {
@@ -123,8 +130,8 @@ function ClientFormFields({ values, setField, rooms = [] }) {
             isDisabled={!values.room || bedOptions.length === 0}
           >
             {bedOptions.map((bed) => (
-              <option key={bed} value={bed}>
-                {t("clients.bedNumber").replace("{n}", bed)}
+              <option key={bed.id} value={bed.id}>
+                {bedLabel(bed)}
               </option>
             ))}
           </Select>
