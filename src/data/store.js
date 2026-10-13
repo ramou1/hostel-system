@@ -178,10 +178,10 @@ const INITIAL_ACCOUNT = { planId: "pro" };
 
 export const INITIAL_LOCKERS = [
   { id: "lk-1", code: "A-01", clientName: "Ana Beatriz" },
-  { id: "lk-2", code: "A-02", clientName: "" },
-  { id: "lk-3", code: "A-03", clientName: "" },
+  { id: "lk-2", code: "A-02", clientName: "Sofía Gómez" },
+  { id: "lk-3", code: "A-03", clientName: "Michael Johnson" },
   { id: "lk-4", code: "B-01", clientName: "Lucas Pereira" },
-  { id: "lk-5", code: "B-02", clientName: "" },
+  { id: "lk-5", code: "B-02", clientName: "Emily Davis" },
 ];
 
 export const INITIAL_RENTALS = [
@@ -222,26 +222,26 @@ function seedClient(partial) {
 }
 
 export const INITIAL_CLIENTS = [
-  seedClient({ name: "Ana Beatriz", email: "ana.beatriz@example.com", phone: "(11) 98888-1010", room: "Quarto 101", cpf: "123.456.789-00", documentId: "", photo: "", country: "Brasil", languages: ["pt"], source: SOURCE.LINK, registeredAt: "2026-09-09T10:15:00", locker: "A-01" }),
-  seedClient({ name: "Lucas Pereira", email: "lucas.pereira@example.com", phone: "(21) 97777-2020", room: "Quarto 102", cpf: "987.654.321-00", documentId: "", photo: "", country: "Brasil", languages: ["pt", "en"], source: SOURCE.DESK, registeredAt: "2026-09-08T18:40:00", locker: "B-01" }),
-  seedClient({ name: "Sofía Gómez", email: "sofia.gomez@example.com", phone: "+54 9 11 5555-3030", room: "Quarto 103", cpf: "", documentId: "DNI 40.123.456", photo: "", country: "Argentina", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-09-08T09:05:00" }),
-  seedClient({ name: "Michael Johnson", email: "michael.johnson@example.com", phone: "+1 202 555-4040", room: "Quarto 104", cpf: "", documentId: "US-PP-548921", photo: "", country: "Estados Unidos", languages: ["en"], source: SOURCE.DESK, registeredAt: "2026-09-07T14:20:00" }),
-  seedClient({ name: "Emily Davis", email: "emily.davis@example.com", phone: "+1 415 555-5050", room: "Quarto 101", cpf: "", documentId: "US-PP-773310", photo: "", country: "Estados Unidos", languages: ["en"], source: SOURCE.LINK, registeredAt: "2026-09-06T11:00:00" }),
-  seedClient({ name: "João Ferreira", email: "joao.ferreira@example.com", phone: "+351 912 345 678", room: "Quarto 102", cpf: "", documentId: "PT 12345678", photo: "", country: "Portugal", languages: ["pt"], source: SOURCE.DESK, registeredAt: "2026-09-05T16:30:00" }),
-  seedClient({ name: "Camila Rojas", email: "camila.rojas@example.com", phone: "+56 9 6666 7070", room: "Quarto 103", cpf: "", documentId: "CL 18.765.432", photo: "", country: "Chile", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-09-04T08:45:00" }),
-  seedClient({ name: "Pierre Dubois", email: "pierre.dubois@example.com", phone: "+33 6 12 34 56 78", room: "Quarto 104", cpf: "", documentId: "FR-PP-99AA77", photo: "", country: "França", languages: ["fr", "en"], source: SOURCE.DESK, registeredAt: "2026-09-03T19:10:00" }),
-  seedClient({ name: "Lena Müller", email: "lena.mueller@example.com", phone: "+49 151 2345678", room: "Quarto 101", cpf: "", documentId: "DE-ID-556677", photo: "", country: "Alemanha", languages: ["de"], source: SOURCE.LINK, registeredAt: "2026-09-01T12:00:00" }),
-  seedClient({ name: "Marta Silva", email: "marta.silva@example.com", phone: "(31) 96666-8080", room: "Quarto 102", cpf: "777.666.555-44", documentId: "", photo: "", country: "Brasil", languages: ["pt"], source: SOURCE.LINK, registeredAt: "2026-08-31T09:20:00" }),
-  seedClient({ name: "Giovanni Rossi", email: "giovanni.rossi@example.com", phone: "+39 340 123 4567", room: "Quarto 103", cpf: "", documentId: "IT-PP-1122AA", photo: "", country: "Itália", languages: ["it"], source: SOURCE.DESK, registeredAt: "2026-08-30T15:45:00" }),
-  seedClient({ name: "Carlos Sánchez", email: "carlos.sanchez@example.com", phone: "+34 612 345 678", room: "Quarto 104", cpf: "", documentId: "ES 98765432X", photo: "", country: "Espanha", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-08-29T11:10:00" }),
-  seedClient({ name: "Fátima Alves", email: "fatima.alves@example.com", phone: "+351 913 222 111", room: "Quarto 101", cpf: "", documentId: "PT 87654321", photo: "", country: "Portugal", languages: ["pt"], source: SOURCE.DESK, registeredAt: "2026-08-28T17:05:00" }),
-  seedClient({ name: "Hans Weber", email: "hans.weber@example.com", phone: "+49 172 9876543", room: "Quarto 102", cpf: "", documentId: "DE-ID-889900", photo: "", country: "Alemanha", languages: ["de"], source: SOURCE.LINK, registeredAt: "2026-08-27T08:30:00" }),
-  seedClient({ name: "Marie Laurent", email: "marie.laurent@example.com", phone: "+33 6 98 76 54 32", room: "Quarto 103", cpf: "", documentId: "FR-PP-33BB11", photo: "", country: "França", languages: ["fr"], source: SOURCE.DESK, registeredAt: "2026-08-26T13:50:00" }),
-  seedClient({ name: "Diego Fernández", email: "diego.fernandez@example.com", phone: "+54 9 11 4444-9090", room: "Quarto 104", cpf: "", documentId: "DNI 38.222.111", photo: "", country: "Argentina", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-08-25T10:00:00" }),
-  seedClient({ name: "Sarah Williams", email: "sarah.williams@example.com", phone: "+1 646 555-6060", room: "Quarto 101", cpf: "", documentId: "US-PP-660011", photo: "", country: "Estados Unidos", languages: ["en"], source: SOURCE.DESK, registeredAt: "2026-08-24T19:25:00" }),
-  seedClient({ name: "Bruno Costa", email: "bruno.costa@example.com", phone: "(41) 95555-7070", room: "Quarto 102", cpf: "121.232.343-45", documentId: "", photo: "", country: "Brasil", languages: ["pt"], source: SOURCE.LINK, registeredAt: "2026-08-23T14:15:00" }),
-  seedClient({ name: "Valentina Torres", email: "valentina.torres@example.com", phone: "+56 9 7777 8080", room: "Quarto 103", cpf: "", documentId: "CL 19.888.777", photo: "", country: "Chile", languages: ["es"], source: SOURCE.DESK, registeredAt: "2026-08-22T12:40:00" }),
-  seedClient({ name: "Thomas Becker", email: "thomas.becker@example.com", phone: "+49 160 5554443", room: "Quarto 104", cpf: "", documentId: "DE-ID-445566", photo: "", country: "Alemanha", languages: ["de"], source: SOURCE.LINK, registeredAt: "2026-08-21T16:55:00" }),
+  seedClient({ name: "Ana Beatriz", email: "ana.beatriz@example.com", phone: "(11) 98888-1010", room: "Quarto 101", bed: "bunk-1", cpf: "123.456.789-00", documentId: "BR-PP-445566", photo: "", country: "Brasil", nationality: "Brasileira", birthDate: "1998-03-12", originCity: "São Paulo", travelReason: "tourism", languages: ["pt"], source: SOURCE.LINK, registeredAt: "2026-09-09T10:15:00", locker: "A-01" }),
+  seedClient({ name: "Lucas Pereira", email: "lucas.pereira@example.com", phone: "(21) 97777-2020", room: "Quarto 102", bed: "single-1", cpf: "987.654.321-00", documentId: "BR-PP-102030", photo: "", country: "Brasil", nationality: "Brasileira", birthDate: "1995-07-22", originCity: "Rio de Janeiro", travelReason: "work", languages: ["pt", "en"], source: SOURCE.DESK, registeredAt: "2026-09-08T18:40:00", locker: "B-01" }),
+  seedClient({ name: "Sofía Gómez", email: "sofia.gomez@example.com", phone: "+54 9 11 5555-3030", room: "Quarto 103", bed: "single-1", cpf: "", documentId: "DNI 40.123.456", photo: "", country: "Argentina", nationality: "Argentina", birthDate: "1999-11-02", originCity: "Buenos Aires", travelReason: "tourism", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-09-08T09:05:00", locker: "A-02" }),
+  seedClient({ name: "Michael Johnson", email: "michael.johnson@example.com", phone: "+1 202 555-4040", room: "Quarto 104", bed: "bunk-1", cpf: "", documentId: "US-PP-548921", photo: "", country: "Estados Unidos", nationality: "Americana", birthDate: "1992-01-18", originCity: "Washington", travelReason: "tourism", languages: ["en"], source: SOURCE.DESK, registeredAt: "2026-09-07T14:20:00", locker: "A-03" }),
+  seedClient({ name: "Emily Davis", email: "emily.davis@example.com", phone: "+1 415 555-5050", room: "Quarto 101", bed: "bunk-2", cpf: "", documentId: "US-PP-773310", photo: "", country: "Estados Unidos", nationality: "Americana", birthDate: "1996-05-09", originCity: "San Francisco", travelReason: "study", languages: ["en"], source: SOURCE.LINK, registeredAt: "2026-09-06T11:00:00", locker: "B-02" }),
+  seedClient({ name: "João Ferreira", email: "joao.ferreira@example.com", phone: "+351 912 345 678", room: "Quarto 102", bed: "single-2", cpf: "", documentId: "PT 12345678", photo: "", country: "Portugal", nationality: "Portuguesa", birthDate: "1990-09-14", originCity: "Lisboa", travelReason: "tourism", languages: ["pt", "en"], source: SOURCE.DESK, registeredAt: "2026-09-05T16:30:00" }),
+  seedClient({ name: "Camila Rojas", email: "camila.rojas@example.com", phone: "+56 9 6666 7070", room: "Quarto 103", bed: "single-2", cpf: "", documentId: "CL 18.765.432", photo: "", country: "Chile", nationality: "Chilena", birthDate: "2001-02-28", originCity: "Santiago", travelReason: "tourism", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-09-04T08:45:00" }),
+  seedClient({ name: "Pierre Dubois", email: "pierre.dubois@example.com", phone: "+33 6 12 34 56 78", room: "Quarto 104", bed: "bunk-2", cpf: "", documentId: "FR-PP-99AA77", photo: "", country: "França", nationality: "Francesa", birthDate: "1988-12-03", originCity: "Paris", travelReason: "work", languages: ["fr", "en"], source: SOURCE.DESK, registeredAt: "2026-09-03T19:10:00" }),
+  seedClient({ name: "Lena Müller", email: "lena.mueller@example.com", phone: "+49 151 2345678", room: "Quarto 101", bed: "bunk-1", cpf: "", documentId: "DE-ID-556677", photo: "", country: "Alemanha", nationality: "Alemã", birthDate: "1994-06-17", originCity: "Berlim", travelReason: "study", languages: ["de", "en"], source: SOURCE.LINK, registeredAt: "2026-09-01T12:00:00" }),
+  seedClient({ name: "Marta Silva", email: "marta.silva@example.com", phone: "(31) 96666-8080", room: "Quarto 102", bed: "single-3", cpf: "777.666.555-44", documentId: "BR-PP-778899", photo: "", country: "Brasil", nationality: "Brasileira", birthDate: "1997-04-21", originCity: "Belo Horizonte", travelReason: "tourism", languages: ["pt"], source: SOURCE.LINK, registeredAt: "2026-08-31T09:20:00" }),
+  seedClient({ name: "Giovanni Rossi", email: "giovanni.rossi@example.com", phone: "+39 340 123 4567", room: "Quarto 103", bed: "single-1", cpf: "", documentId: "IT-PP-1122AA", photo: "", country: "Itália", nationality: "Italiana", birthDate: "1991-08-08", originCity: "Roma", travelReason: "tourism", languages: ["it", "en"], source: SOURCE.DESK, registeredAt: "2026-08-30T15:45:00" }),
+  seedClient({ name: "Carlos Sánchez", email: "carlos.sanchez@example.com", phone: "+34 612 345 678", room: "Quarto 104", bed: "bunk-3", cpf: "", documentId: "ES 98765432X", photo: "", country: "Espanha", nationality: "Espanhola", birthDate: "1989-10-30", originCity: "Madrid", travelReason: "work", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-08-29T11:10:00" }),
+  seedClient({ name: "Fátima Alves", email: "fatima.alves@example.com", phone: "+351 913 222 111", room: "Quarto 101", bed: "bunk-2", cpf: "", documentId: "PT 87654321", photo: "", country: "Portugal", nationality: "Portuguesa", birthDate: "1993-01-11", originCity: "Porto", travelReason: "tourism", languages: ["pt"], source: SOURCE.DESK, registeredAt: "2026-08-28T17:05:00" }),
+  seedClient({ name: "Hans Weber", email: "hans.weber@example.com", phone: "+49 172 9876543", room: "Quarto 102", bed: "single-1", cpf: "", documentId: "DE-ID-889900", photo: "", country: "Alemanha", nationality: "Alemã", birthDate: "1985-03-19", originCity: "Munique", travelReason: "work", languages: ["de"], source: SOURCE.LINK, registeredAt: "2026-08-27T08:30:00" }),
+  seedClient({ name: "Marie Laurent", email: "marie.laurent@example.com", phone: "+33 6 98 76 54 32", room: "Quarto 103", bed: "single-2", cpf: "", documentId: "FR-PP-33BB11", photo: "", country: "França", nationality: "Francesa", birthDate: "1998-07-07", originCity: "Lyon", travelReason: "study", languages: ["fr"], source: SOURCE.DESK, registeredAt: "2026-08-26T13:50:00" }),
+  seedClient({ name: "Diego Fernández", email: "diego.fernandez@example.com", phone: "+54 9 11 4444-9090", room: "Quarto 104", bed: "bunk-4", cpf: "", documentId: "DNI 38.222.111", photo: "", country: "Argentina", nationality: "Argentina", birthDate: "1996-09-25", originCity: "Córdoba", travelReason: "tourism", languages: ["es"], source: SOURCE.LINK, registeredAt: "2026-08-25T10:00:00" }),
+  seedClient({ name: "Sarah Williams", email: "sarah.williams@example.com", phone: "+1 646 555-6060", room: "Quarto 101", bed: "bunk-1", cpf: "", documentId: "US-PP-660011", photo: "", country: "Estados Unidos", nationality: "Americana", birthDate: "1992-12-14", originCity: "Nova York", travelReason: "tourism", languages: ["en"], source: SOURCE.DESK, registeredAt: "2026-08-24T19:25:00" }),
+  seedClient({ name: "Bruno Costa", email: "bruno.costa@example.com", phone: "(41) 95555-7070", room: "Quarto 102", bed: "single-2", cpf: "121.232.343-45", documentId: "BR-PP-334455", photo: "", country: "Brasil", nationality: "Brasileira", birthDate: "1999-05-03", originCity: "Curitiba", travelReason: "tourism", languages: ["pt"], source: SOURCE.LINK, registeredAt: "2026-08-23T14:15:00" }),
+  seedClient({ name: "Valentina Torres", email: "valentina.torres@example.com", phone: "+56 9 7777 8080", room: "Quarto 103", bed: "single-1", cpf: "", documentId: "CL 19.888.777", photo: "", country: "Chile", nationality: "Chilena", birthDate: "2000-08-16", originCity: "Valparaíso", travelReason: "study", languages: ["es", "en"], source: SOURCE.DESK, registeredAt: "2026-08-22T12:40:00" }),
+  seedClient({ name: "Thomas Becker", email: "thomas.becker@example.com", phone: "+49 160 5554443", room: "Quarto 104", bed: "bunk-5", cpf: "", documentId: "DE-ID-445566", photo: "", country: "Alemanha", nationality: "Alemã", birthDate: "1987-11-27", originCity: "Hamburgo", travelReason: "work", languages: ["de", "en"], source: SOURCE.LINK, registeredAt: "2026-08-21T16:55:00" }),
 ];
 
 function readJSON(key, seed) {
@@ -260,8 +260,34 @@ function uid(prefix) {
 }
 
 // ----- Clientes -----
+const CLIENT_PROFILE_FIELDS = [
+  "birthDate",
+  "nationality",
+  "originCity",
+  "travelReason",
+  "bed",
+  "documentId",
+  "cpf",
+  "locker",
+];
+
 export function loadClients() {
-  return readJSON(CLIENTS_KEY, INITIAL_CLIENTS);
+  const stored = readJSON(CLIENTS_KEY, INITIAL_CLIENTS);
+  let changed = false;
+  const list = stored.map((client) => {
+    const seed = INITIAL_CLIENTS.find((item) => item.email && item.email === client.email);
+    if (!seed) return client;
+    const next = { ...client };
+    CLIENT_PROFILE_FIELDS.forEach((field) => {
+      if (!next[field] && seed[field]) {
+        next[field] = seed[field];
+        changed = true;
+      }
+    });
+    return next;
+  });
+  if (changed) saveClients(list);
+  return list;
 }
 
 /** Camas livres de um quarto, já separadas por tipo e número. */
@@ -527,7 +553,16 @@ export function createAccountWithHostel({ planId, hostel }) {
 
 // ----- Armários -----
 export function loadLockers() {
-  return readJSON(LOCKERS_KEY, INITIAL_LOCKERS);
+  const stored = readJSON(LOCKERS_KEY, INITIAL_LOCKERS);
+  let changed = false;
+  const list = stored.map((locker) => {
+    const seed = INITIAL_LOCKERS.find((item) => item.code === locker.code);
+    if (!seed || locker.clientName || !seed.clientName) return locker;
+    changed = true;
+    return { ...locker, clientName: seed.clientName };
+  });
+  if (changed) saveLockers(list);
+  return list;
 }
 
 export function saveLockers(list) {

@@ -33,7 +33,6 @@ const EMPTY_CLIENT = {
   nationality: "",
   birthDate: "",
   originCity: "",
-  destinationCity: "",
   travelReason: "",
   languages: ["pt"],
   locker: "",

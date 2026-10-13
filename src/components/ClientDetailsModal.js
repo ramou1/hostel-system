@@ -97,7 +97,7 @@ function ClientDetailsModal({ isOpen, onClose, client, footer }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
       <ModalOverlay backdropFilter="blur(4px)" />
       <ModalContent borderRadius="16px">
         <ModalHeader>{t("clients.detailsTitle")}</ModalHeader>
@@ -153,16 +153,10 @@ function ClientDetailsModal({ isOpen, onClose, client, footer }) {
               <InfoField label={t("clients.originCity")}>
                 {client.originCity || "—"}
               </InfoField>
-              <InfoField label={t("clients.destinationCity")}>
-                {client.destinationCity || "—"}
-              </InfoField>
               <InfoField label={t("clients.travelReason")}>
                 {client.travelReason
                   ? t(`clients.travelReasons.${client.travelReason}`)
                   : "—"}
-              </InfoField>
-              <InfoField label={t("clients.locker")}>
-                {getClientLocker(client) || "—"}
               </InfoField>
               <InfoField label={t("clients.cpf")}>
                 {client.cpf || "—"}
@@ -173,9 +167,14 @@ function ClientDetailsModal({ isOpen, onClose, client, footer }) {
               <InfoField label={t("clients.country")}>
                 {client.country || "—"}
               </InfoField>
-              <InfoField label={t("clients.languageMain")}>
-                {languageLabels()}
+              <InfoField label={t("clients.locker")}>
+                {getClientLocker(client) || "—"}
               </InfoField>
+              <Box gridColumn={{ base: "auto", sm: "1 / -1" }}>
+                <InfoField label={t("clients.languageMain")}>
+                  <Text whiteSpace="nowrap">{languageLabels()}</Text>
+                </InfoField>
+              </Box>
               <InfoField label={t("clients.registeredAt")}>
                 {formatDate(client.registeredAt, true)}
               </InfoField>

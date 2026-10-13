@@ -8,8 +8,7 @@ import {
   Box,
   Checkbox,
   CheckboxGroup,
-  Wrap,
-  WrapItem,
+  Flex,
 } from "@chakra-ui/react";
 import { useI18n } from "../contexts/LanguageContext";
 import PhotoUpload from "./PhotoUpload";
@@ -139,18 +138,6 @@ function ClientFormFields({ values, setField, rooms = [] }) {
 
         <FormControl>
           <FormLabel fontSize="sm">
-            {t("clients.locker")} {t("clients.optionalTag")}
-          </FormLabel>
-          <Input
-            name="locker"
-            placeholder={t("clients.lockerPlaceholder")}
-            value={values.locker || ""}
-            onChange={handle}
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel fontSize="sm">
             {t("clients.cpf")} {t("clients.optionalTag")}
           </FormLabel>
           <Input
@@ -217,18 +204,6 @@ function ClientFormFields({ values, setField, rooms = [] }) {
 
         <FormControl>
           <FormLabel fontSize="sm">
-            {t("clients.destinationCity")} {t("clients.optionalTag")}
-          </FormLabel>
-          <Input
-            name="destinationCity"
-            placeholder={t("clients.destinationCity")}
-            value={values.destinationCity || ""}
-            onChange={handle}
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel fontSize="sm">
             {t("clients.travelReason")} {t("clients.optionalTag")}
           </FormLabel>
           <Select
@@ -246,21 +221,34 @@ function ClientFormFields({ values, setField, rooms = [] }) {
       </SimpleGrid>
 
       <FormControl mt={4}>
+        <FormLabel fontSize="sm">
+          {t("clients.locker")} {t("clients.optionalTag")}
+        </FormLabel>
+        <Input
+          name="locker"
+          placeholder={t("clients.lockerPlaceholder")}
+          value={values.locker || ""}
+          onChange={handle}
+        />
+      </FormControl>
+
+      <FormControl mt={4}>
         <FormLabel fontSize="sm">{t("clients.languageMain")}</FormLabel>
         <CheckboxGroup value={selectedLanguages}>
-          <Wrap spacing={3}>
+          <Flex gap={4} wrap="nowrap">
             {LANGUAGE_OPTIONS.map((code) => (
-              <WrapItem key={code}>
-                <Checkbox
-                  colorScheme="brand"
-                  isChecked={selectedLanguages.includes(code)}
-                  onChange={() => toggleLanguage(code)}
-                >
-                  {t(`clients.languages.${code}`)}
-                </Checkbox>
-              </WrapItem>
+              <Checkbox
+                key={code}
+                colorScheme="brand"
+                flexShrink={0}
+                whiteSpace="nowrap"
+                isChecked={selectedLanguages.includes(code)}
+                onChange={() => toggleLanguage(code)}
+              >
+                {t(`clients.languages.${code}`)}
+              </Checkbox>
             ))}
-          </Wrap>
+          </Flex>
         </CheckboxGroup>
       </FormControl>
     </Box>

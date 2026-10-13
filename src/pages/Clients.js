@@ -76,7 +76,6 @@ const EMPTY_CLIENT = {
   nationality: "",
   birthDate: "",
   originCity: "",
-  destinationCity: "",
   travelReason: "",
   languages: ["pt"],
   locker: "",
@@ -479,7 +478,7 @@ function Clients() {
       </Modal>
 
       {/* Adicionar */}
-      <Modal isOpen={addModal.isOpen} onClose={addModal.onClose} isCentered size="xl">
+      <Modal isOpen={addModal.isOpen} onClose={addModal.onClose} isCentered size="3xl">
         <ModalOverlay backdropFilter="blur(4px)" />
         <ModalContent borderRadius="16px">
           <ModalHeader>{t("clients.addTitle")}</ModalHeader>
