@@ -305,6 +305,7 @@ export const translations = {
       language: "Idioma",
       portuguese: "Português",
       english: "Inglês",
+      spanish: "Espanhol",
       account: "Conta",
       notifications: "Notificações por e-mail",
       notificationsDisabled: "Indisponível no momento",
@@ -748,6 +749,7 @@ export const translations = {
       language: "Language",
       portuguese: "Portuguese",
       english: "English",
+      spanish: "Spanish",
       account: "Account",
       notifications: "Email notifications",
       notificationsDisabled: "Unavailable at the moment",
@@ -888,6 +890,12 @@ export const translations = {
   es: {
     common: {
       optional: "opcional",
+    },
+    settings: {
+      language: "Idioma",
+      portuguese: "Portugués",
+      english: "Inglés",
+      spanish: "Español",
     },
     seo: {
       homeTitle: "Hostely | Plataforma de gestión de hostels",

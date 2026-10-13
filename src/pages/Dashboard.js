@@ -51,7 +51,7 @@ import {
   startOfDay,
   endOfDay,
 } from "date-fns";
-import { ptBR, enUS } from "date-fns/locale";
+import { ptBR, enUS, es } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useI18n } from "../contexts/LanguageContext";
 import ClientDetailsModal from "../components/ClientDetailsModal";
@@ -68,7 +68,52 @@ ChartJS.register(
   Filler
 );
 
-const locales = { pt: ptBR, en: enUS };
+const locales = { pt: ptBR, en: enUS, es };
+
+const CALENDAR_MESSAGES = {
+  pt: {
+    today: "Hoje",
+    previous: "Anterior",
+    next: "Próximo",
+    month: "Mês",
+    week: "Semana",
+    day: "Dia",
+    agenda: "Agenda",
+    date: "Data",
+    time: "Hora",
+    event: "Evento",
+    noEventsInRange: "Nenhum evento neste período.",
+    showMore: (total) => `+${total} mais`,
+  },
+  en: {
+    today: "Today",
+    previous: "Back",
+    next: "Next",
+    month: "Month",
+    week: "Week",
+    day: "Day",
+    agenda: "Agenda",
+    date: "Date",
+    time: "Time",
+    event: "Event",
+    noEventsInRange: "No events in this range.",
+    showMore: (total) => `+${total} more`,
+  },
+  es: {
+    today: "Hoy",
+    previous: "Anterior",
+    next: "Siguiente",
+    month: "Mes",
+    week: "Semana",
+    day: "Día",
+    agenda: "Agenda",
+    date: "Fecha",
+    time: "Hora",
+    event: "Evento",
+    noEventsInRange: "No hay eventos en este período.",
+    showMore: (total) => `+${total} más`,
+  },
+};
 
 function StatCard({ icon, iconBg, label, children, topRight }) {
   return (
@@ -111,6 +156,10 @@ function Dashboard() {
   const gridColor = useColorModeValue("rgba(0,0,0,0.06)", "rgba(255,255,255,0.08)");
   const mutedText = useColorModeValue("gray.500", "gray.400");
   const calendarBg = useColorModeValue("white", "gray.800");
+  const calendarText = useColorModeValue("gray.800", "gray.100");
+  const calendarMuted = useColorModeValue("gray.500", "gray.300");
+  const calendarBorder = useColorModeValue("gray.200", "whiteAlpha.300");
+  const calendarBtnHover = useColorModeValue("gray.100", "whiteAlpha.200");
 
   const localizer = useMemo(
     () =>
@@ -210,21 +259,7 @@ function Dashboard() {
     detailsModal.onOpen();
   };
 
-  const messages = {
-    today: lang === "pt" ? "Hoje" : "Today",
-    previous: lang === "pt" ? "Anterior" : "Back",
-    next: lang === "pt" ? "Próximo" : "Next",
-    month: lang === "pt" ? "Mês" : "Month",
-    week: lang === "pt" ? "Semana" : "Week",
-    day: lang === "pt" ? "Dia" : "Day",
-    agenda: lang === "pt" ? "Agenda" : "Agenda",
-    date: lang === "pt" ? "Data" : "Date",
-    time: lang === "pt" ? "Hora" : "Time",
-    event: lang === "pt" ? "Evento" : "Event",
-    noEventsInRange:
-      lang === "pt" ? "Nenhum evento neste período." : "No events in this range.",
-    showMore: (total) => (lang === "pt" ? `+${total} mais` : `+${total} more`),
-  };
+  const messages = CALENDAR_MESSAGES[lang] || CALENDAR_MESSAGES.pt;
 
   return (
     <Stack spacing={6}>
@@ -318,12 +353,33 @@ function Dashboard() {
             bg={calendarBg}
             className="dashboard-calendar"
             sx={{
-              ".rbc-calendar": { fontSize: "13px" },
+              ".rbc-calendar": { fontSize: "13px", color: calendarText },
               ".rbc-toolbar": { flexWrap: "wrap", gap: "4px", mb: 2 },
+              ".rbc-toolbar-label": { color: calendarText, fontWeight: 600 },
+              ".rbc-header, .rbc-header button, .rbc-button-link": {
+                color: calendarText,
+              },
+              ".rbc-off-range, .rbc-off-range .rbc-button-link": {
+                color: calendarMuted,
+              },
               ".rbc-toolbar button": {
+                color: calendarText,
+                borderColor: calendarBorder,
                 borderRadius: "8px",
                 fontSize: "12px",
                 padding: "4px 8px",
+              },
+              ".rbc-toolbar button:hover, .rbc-toolbar button:focus, .rbc-toolbar button:active, .rbc-toolbar button.rbc-active": {
+                color: calendarText,
+                backgroundColor: calendarBtnHover,
+                borderColor: calendarBorder,
+                boxShadow: "none",
+              },
+              ".rbc-month-view, .rbc-header, .rbc-day-bg, .rbc-month-row": {
+                borderColor: calendarBorder,
+              },
+              ".rbc-event, .rbc-event-content": {
+                color: "gray.900",
               },
               ".rbc-event": {
                 backgroundColor: "#f59e0b",
@@ -339,7 +395,7 @@ function Dashboard() {
               events={calendarEvents}
               startAccessor="start"
               endAccessor="end"
-              culture={lang === "pt" ? "pt" : "en"}
+              culture={locales[lang] ? lang : "pt"}
               messages={messages}
               views={["month"]}
               defaultView="month"

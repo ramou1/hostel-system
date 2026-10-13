@@ -142,9 +142,9 @@ function SettingsModal({ isOpen, onClose, profile, onSave }) {
 
           <FormControl mb={2}>
             <FormLabel fontSize="sm">{t("settings.language")}</FormLabel>
-            <Flex gap={3}>
+            <Flex gap={3} wrap="wrap">
               <ChoiceButton
-                active={lang === "pt"}
+                active={lang !== "en" && lang !== "es"}
                 onClick={() => setLang("pt")}
                 icon={FiGlobe}
               >
@@ -156,6 +156,13 @@ function SettingsModal({ isOpen, onClose, profile, onSave }) {
                 icon={FiGlobe}
               >
                 {t("settings.english")}
+              </ChoiceButton>
+              <ChoiceButton
+                active={lang === "es"}
+                onClick={() => setLang("es")}
+                icon={FiGlobe}
+              >
+                {t("settings.spanish")}
               </ChoiceButton>
             </Flex>
           </FormControl>
