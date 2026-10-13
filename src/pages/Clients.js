@@ -299,9 +299,7 @@ function Clients() {
                   <Th>{t("clients.email")}</Th>
                   <Th>{t("clients.phone")}</Th>
                   <Th>{t("clients.room")}</Th>
-                  <Th>{t("clients.country")}</Th>
                   <Th>{t("clients.registeredAtShort")}</Th>
-                  <Th>{t("clients.status")}</Th>
                   <Th>{t("clients.source")}</Th>
                 </Tr>
               </Thead>
@@ -332,19 +330,7 @@ function Clients() {
                       <Td fontSize="sm">{client.email}</Td>
                       <Td fontSize="sm">{client.phone}</Td>
                       <Td fontSize="sm">{client.room}</Td>
-                      <Td fontSize="sm">{client.country || "—"}</Td>
                       <Td fontSize="sm">{formatDate(client.registeredAt)}</Td>
-                      <Td>
-                        <Badge
-                          colorScheme={checkedOut ? "gray" : "green"}
-                          borderRadius="full"
-                          textTransform="none"
-                        >
-                          {checkedOut
-                            ? t("clients.statusCheckedOut")
-                            : t("clients.statusCheckedIn")}
-                        </Badge>
-                      </Td>
                       <Td>
                         <SourceBadge source={client.source} t={t} />
                       </Td>
@@ -478,7 +464,7 @@ function Clients() {
       </Modal>
 
       {/* Adicionar */}
-      <Modal isOpen={addModal.isOpen} onClose={addModal.onClose} isCentered size="3xl">
+      <Modal isOpen={addModal.isOpen} onClose={addModal.onClose} isCentered size="2xl">
         <ModalOverlay backdropFilter="blur(4px)" />
         <ModalContent borderRadius="16px">
           <ModalHeader>{t("clients.addTitle")}</ModalHeader>
